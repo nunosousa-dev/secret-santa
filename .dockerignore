@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.github
+.env*
+data
+uploads
+coverage
+test-results
+playwright-report
+*.tsbuildinfo
+.DS_Store
+deploy
+README.md
+IMPLEMENTATION_PLAN.md

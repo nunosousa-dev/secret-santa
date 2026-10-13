@@ -1,0 +1,27 @@
+.directory { scroll-margin-top: 24px; padding-block: 36px 46px; }
+.heading { display: grid; gap: 22px; margin-bottom: 24px; }
+.heading h2 { display: flex; align-items: center; gap: 12px; }
+.count { font: 500 12px var(--font-body); background: #e8eee6; color: var(--green); border: 1px solid #dce4d9; border-radius: 50%; height: 27px; width: 27px; display: inline-grid; place-items: center; }
+.description { font-size: 14px; color: var(--muted); margin-top: 10px; line-height: 1.7; }
+.search { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 9px; padding-left: 14px; color: var(--muted); background: var(--surface); min-height: 48px; }
+.search:focus-within { outline: 2px solid var(--green); outline-offset: 3px; }
+.search input { border: 0; width: 100%; min-width: 0; padding: 14px 10px; background: transparent; font: inherit; font-size: 16px; color: var(--ink); outline: none; }
+.search input::-webkit-search-cancel-button { appearance: none; }
+.search button { width: 44px; min-height: 44px; display: grid; place-items: center; flex-shrink: 0; border: 0; background: transparent; cursor: pointer; color: var(--muted); }
+.grid { display: grid; grid-template-columns: 1fr; gap: 14px; list-style: none; padding: 0; }
+.grid > li { display: flex; min-width: 0; }
+.card { width: 100%; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px 16px 0; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.card:hover { transform: translateY(-4px); border-color: #a6b6a6; box-shadow: 0 9px 24px #233e3010; }
+.portrait { position: relative; }
+.portraitStar { position: absolute; top: 1px; right: -15px; font-size: 28px; line-height: 1; color: var(--rust); }
+.card h3 { font: 500 27px var(--font-heading); margin: 17px 0 8px; }
+.introduction { color: var(--muted); font-size: 12px; line-height: 1.7; max-width: 205px; min-height: 42px; }
+.tags { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin: 15px 0 23px; }
+.tags span { font-size: 10px; color: #626b60; border-radius: 4px; background: #f2f2eb; padding: 5px 8px; line-height: 1.2; }
+.cardLink { margin-top: auto; border-top: 1px solid var(--line); width: 100%; min-height: 49px; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 12px; font-weight: 650; color: var(--green); }
+.empty { text-align: center; padding: 42px 18px; border: 1px dashed var(--line); border-radius: 14px; color: var(--muted); }
+.empty > svg { margin: auto auto 14px; }
+.empty h3 { color: var(--green); margin-bottom: 8px; }
+.empty p { margin-bottom: 20px; font-size: 14px; }
+@media(min-width: 360px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media(min-width: 720px) { .directory { padding-block: 48px 62px; } .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; } .heading { grid-template-columns: 1fr 270px; align-items: end; gap: 32px; margin-bottom: 32px; } .search { margin-bottom: 4px; } .search input { font-size: 13px; } .card { padding: 31px 25px 0; } .card h3 { font-size: 30px; } .introduction { font-size: 13px; } .tags span { font-size: 11px; } .cardLink { font-size: 13px; min-height: 54px; } }

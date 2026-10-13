@@ -1,0 +1,5 @@
+.empty { min-height: 58vh; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 22px; padding-block: 55px; }
+.empty > svg { color: var(--rust); }
+.empty .eyebrow { margin: 0; }
+.empty h1 { font-size: clamp(34px, 7vw, 48px); }
+.empty p:not(.eyebrow) { color: var(--muted); font-size: 15px; line-height: 1.8; }

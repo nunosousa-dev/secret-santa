@@ -1,0 +1,11 @@
+.avatar { display: inline-flex; width: 100px; height: 100px; flex: 0 0 auto; overflow: hidden; border-radius: 50%; }
+.avatar svg { width: 100%; height: 100%; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.large { width: 132px; height: 132px; }
+.peach { background: #f1d9c7; }
+.sage { background: #dce3d1; }
+.lavender { background: #e5dfec; }
+.sand { background: #f0e1c9; }
+.rose { background: #f0d9da; }
+.blue { background: #dbe6ed; }
+@media (min-width: 720px) { .avatar { width: 116px; height: 116px; } .large { width: 150px; height: 150px; } }

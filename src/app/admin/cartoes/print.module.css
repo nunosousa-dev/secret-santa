@@ -1,0 +1,40 @@
+.page { padding-block: 30px 50px; }
+.tools { display: grid; gap: 20px; max-width: 680px; margin: 0 auto 30px; }
+.tools > a { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; color: var(--muted); }
+.tools h1 { font-size: clamp(32px, 7vw, 45px); }
+.tools p { font-size: 14px; line-height: 1.8; color: var(--muted); }
+.tools .eyebrow { margin-bottom: -10px; }
+.origin { padding: 16px; background: #edf0e5; border-radius: 8px; overflow-wrap: anywhere; }
+.sheet { max-width: 720px; margin: 0 auto 26px; padding: 18px; background: white; border: 1px solid var(--line); border-radius: 10px; }
+.grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+.card { position: relative; container-type: inline-size; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); aspect-ratio: 88 / 84; min-width: 0; border: 1px dashed #b7c2b1; background: #fffefa; text-align: center; }
+/* Two midpoint folds leave every item within its own quarter. */
+.card::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px dashed #b7c2b1; pointer-events: none; }
+.card::after { content: ""; position: absolute; top: 50%; left: 0; right: 0; border-top: 1px dashed #b7c2b1; pointer-events: none; }
+.quarter { display: flex; justify-content: center; align-items: center; min-width: 0; min-height: 0; padding: 4.55cqw 5.68cqw; }
+.qrQuarter { grid-area: 2 / 2; }
+.avatar { height: 27.27cqw; width: 27.27cqw; flex-shrink: 0; }
+.avatar > span { height: 100% !important; width: 100% !important; }
+.card h2 { max-width: 100%; font-size: 6.4cqw; letter-spacing: -.02em; line-height: 1.1; overflow-wrap: anywhere; }
+.card .mediumName { font-size: 4.8cqw; }
+.card .longName { font-size: 3.6cqw; }
+.qr { width: 34.09cqw; height: 34.09cqw; flex-shrink: 0; background: white; }
+@media(min-width: 600px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@page { size: A4 portrait; margin: 12mm; }
+@media print {
+  :global([data-print-hidden]) { display: none !important; }
+  :global(html), :global(body) { background: white !important; margin: 0 !important; padding: 0 !important; }
+  .page { padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: none !important; }
+  .sheet { padding: 0; margin: 0; border: 0; border-radius: 0; width: 184mm; max-width: none; break-after: page; break-inside: avoid; }
+  .sheet:last-child { break-after: auto; }
+  .grid { grid-template-columns: repeat(2, 88mm); grid-template-rows: repeat(3, 84mm); column-gap: 8mm; row-gap: 6mm; }
+  .card { width: 88mm; height: 84mm; border: .2mm dashed #a9b4a3; background: white; break-inside: avoid; }
+  .card::before { border-left: .2mm dashed #a9b4a3; }
+  .card::after { border-top: .2mm dashed #a9b4a3; }
+  .quarter { padding: 4mm 5mm; }
+  .avatar { height: 24mm; width: 24mm; }
+  .card h2 { font-size: 16pt; line-height: 1.1; }
+  .card .mediumName { font-size: 12pt; }
+  .card .longName { font-size: 9pt; }
+  .qr { width: 30mm; height: 30mm; flex-shrink: 0; }
+}
