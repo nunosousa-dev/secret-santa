@@ -4,6 +4,14 @@ const config: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   serverExternalPackages: ["better-sqlite3"],
+  async rewrites() {
+    // Keep previously shared URLs working, including edit-link fragments in the browser.
+    return [
+      { source: "/editar/:id", destination: "/edit/:id" },
+      { source: "/avatares/:id", destination: "/avatars/:id" },
+      { source: "/admin/cartoes", destination: "/admin/cards" },
+    ];
+  },
   async headers() {
     return [{
       source: "/(.*)",
@@ -12,7 +20,7 @@ const config: NextConfig = {
         { key: "Referrer-Policy", value: "no-referrer" },
         { key: "X-Frame-Options", value: "DENY" },
       ],
-    }, ...["/admin/:path*", "/editar/:path*", "/api/:path*"].map(source => ({ source, headers: [{ key: "Cache-Control", value: "private, no-store" }] }))];
+    }, ...["/admin/:path*", "/edit/:path*", "/editar/:path*", "/api/:path*"].map(source => ({ source, headers: [{ key: "Cache-Control", value: "private, no-store" }] }))];
   },
 };
 

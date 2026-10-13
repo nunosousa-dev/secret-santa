@@ -8,7 +8,7 @@ imagePullSecrets: []
 # Proposed hostname; confirm it before creating DNS/tunnel records or printing cards.
 hostname: amigo-secreto.nunosousa.dev
 admin:
-  existingSecret: amigo-secreto-admin
+  existingSecret: secret-santa-admin
   secretKey: ADMIN_PASSWORD_HASH
 storage:
   storageClassName: truenas-iscsi-retain

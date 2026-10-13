@@ -13,7 +13,7 @@ export function FamilyDirectory({ members }: { members: Member[] }) {
   const [query, setQuery] = useState("");
   const visible = members.filter(member => normalise(`${member.name} ${member.interests.join(" ")}`).includes(normalise(query.trim())));
   return (
-    <section id="familia" aria-labelledby="family-title" className={styles.directory}>
+    <section id="family" aria-labelledby="family-title" className={styles.directory}>
       <div className={styles.heading}>
         <div><p className="eyebrow">À VOLTA DA NOSSA ÁRVORE</p><h2 id="family-title">A nossa família<span className={styles.count}>{members.length}</span></h2><p className={styles.description}>Conhece os desejos de cada um. A inspiração começa aqui.</p></div>
         <div className={styles.search}>

@@ -15,7 +15,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="pt-PT" data-scroll-behavior="smooth">
       <body>
-        <a href="#conteudo" className="skip-link" data-print-hidden>Saltar para o conteúdo</a>
+        <a href="#content" className="skip-link" data-print-hidden>Saltar para o conteúdo</a>
         <SiteHeader />
         {children}
         {getStore().getFamily().demo && <SampleNotice />}

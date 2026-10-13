@@ -9,13 +9,13 @@ import { setTimeout as delay } from "node:timers/promises";
 import sharp from "sharp";
 import { hashPassword, randomToken } from "../src/lib/security";
 
-const image = process.env.TEST_IMAGE || "amigo-secreto:local";
-const name = `amigo-test-${randomUUID().slice(0, 8)}`;
+const image = process.env.TEST_IMAGE || "secret-santa:local";
+const name = `secret-santa-test-${randomUUID().slice(0, 8)}`;
 const dataVolume = `${name}-data`;
 const backupVolume = `${name}-backups`;
 const restoreVolume = `${name}-restored-data`;
 const restoredName = `${name}-restored`;
-const directory = mkdtempSync(join(tmpdir(), "amigo-container-"));
+const directory = mkdtempSync(join(tmpdir(), "secret-santa-container-"));
 const docker = (...args: string[]) => execFileSync("docker", args, { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }).trim();
 const probe = createServer();
 await new Promise<void>(resolve => probe.listen(0, "127.0.0.1", resolve));
@@ -57,9 +57,9 @@ try {
   const avatar = await sharp({ create: { width: 64, height: 32, channels: 3, background: "#429365" } }).png().toBuffer();
   assert.equal((await fetch(`${origin}/api/admin/members/${id}/avatar`, { method: "POST", headers: { "Content-Type": "image/png", Origin: origin, Cookie: cookie }, body: new Uint8Array(avatar) })).status, 200);
   let profile = await (await fetch(`${origin}/p/${id}`)).text();
-  const avatarPath = profile.match(/src="(\/avatares\/[^\"]+)"/)?.[1]; assert.ok(avatarPath);
+  const avatarPath = profile.match(/src="(\/avatars\/[^\"]+)"/)?.[1]; assert.ok(avatarPath);
   assert.equal((await fetch(`${origin}${avatarPath}`)).status, 200);
-  const cards = await (await fetch(`${origin}/admin/cartoes`, { headers: { Cookie: cookie } })).text();
+  const cards = await (await fetch(`${origin}/admin/cards`, { headers: { Cookie: cookie } })).text();
   assert.ok(cards.includes("data-print-card="));
   docker("restart", name);
   await ready();

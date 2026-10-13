@@ -30,7 +30,7 @@ export function EditAccess({ memberId }: { memberId: string }) {
     window.history.replaceState(null, "", window.location.pathname);
     if (!token) { setError("Abre a ligação privada completa que o organizador te enviou."); return; }
     setPending(true); setError("");
-    try { await apiRequest("/api/edit/session", { memberId, token }); window.location.replace(`/editar/${encodeURIComponent(memberId)}`); }
+    try { await apiRequest("/api/edit/session", { memberId, token }); window.location.replace(`/edit/${encodeURIComponent(memberId)}`); }
     catch (error) { setError(error instanceof Error ? error.message : "Não foi possível abrir a edição."); setPending(false); }
   }
   return <div className={styles.form}><p className={styles.help}>Esta ligação permite editar apenas o teu perfil. Guarda-a para voltares mais tarde.</p>{error && <p role="alert" className={`${styles.status} ${styles.error}`}>{error} Volta a abrir a ligação original para tentar novamente.</p>}<button className="button" type="button" disabled={pending} onClick={open}>{pending ? "A abrir…" : "Abrir a minha edição"}</button></div>;

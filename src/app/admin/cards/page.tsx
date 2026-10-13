@@ -15,7 +15,7 @@ export default async function CardsPage() {
   const origin = appOrigin();
   const members = getStore().listMembers();
   const cards = await Promise.all(members.map(async member => ({ member, qr: await profileQr(origin, member.id) })));
-  return <main id="conteudo" className={`container ${styles.page}`}>
+  return <main id="content" className={`container ${styles.page}`}>
     <div className={styles.tools} data-print-hidden><Link href="/admin">← Voltar à administração</Link><p className="eyebrow">O NOSSO SORTEIO</p><h1>Um cartão, uma surpresa.</h1><p>Imprime em A4, a 100% de escala, sem cabeçalhos nem rodapés do navegador. Recorta pelo contorno e dobra ao meio na horizontal e depois na vertical, pelas linhas centrais, com o conteúdo para dentro. Baralha os cartões e abre o teu para ler o QR code.</p><p className={styles.origin}>Os QR codes apontam para <strong>{origin}</strong>. Confirma que este será o endereço definitivo antes de imprimir.</p>{cards.length > 0 ? <PrintButton /> : <p>Ainda não há perfis ativos. Acrescenta membros à família antes de imprimir.</p>}</div>
     {cardSheets(cards).map((sheet, index) => <section className={styles.sheet} key={index} aria-label={`Folha de cartões ${index + 1}`}><div className={styles.grid}>{sheet.map(({ member, qr }) => <article data-print-card data-member-id={member.id} className={styles.card} key={member.id}>
       <div className={styles.quarter}><div className={styles.avatar}><Avatar member={member} eager /></div></div>

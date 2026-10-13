@@ -1,22 +1,24 @@
-# Deploy no homelab
+# Homelab deployment
 
-Os ficheiros estão preparados para a infraestrutura observada em `/Users/CTW01805/Personal/Projects/nunosousa-dev/homelab`. Esse repositório não foi alterado e não foi feito deploy no cluster.
+These files match the infrastructure inspected in the sibling `homelab` repository. That repository has not been modified and the application has not been deployed to the cluster.
 
-## Configuração preparada
+## Prepared configuration
 
-- Talos/Proxmox, nós `amd64` com `homelab/node-type: vm`.
-- Argo CD com charts locais em `kubernetes/apps/<app>` e Application em `kubernetes/apps/<app>.yaml`.
-- Gateway Traefik `homelab`, namespace `traefik`, listener `web`.
-- HTTPS público termina no Cloudflare; o túnel encaminha HTTP para `http://traefik.traefik.svc.cluster.local:80`.
-- SQLite e avatares no PVC RWO `truenas-iscsi-retain`, uma réplica e rollout Recreate.
-- Backups opcionais no PVC RWX `truenas-nfs-retain`; nunca usar esse NFS para a base de dados ativa.
-- Runtime UID/GID 1001, sem privilégios, raiz só de leitura e `/tmp` temporário.
+- Talos/Proxmox `amd64` nodes labelled `homelab/node-type: vm`.
+- Argo CD with local charts at `kubernetes/apps/<app>` and Applications at `kubernetes/apps/<app>.yaml`.
+- Traefik Gateway `homelab`, namespace `traefik`, listener `web`.
+- Public HTTPS terminates at Cloudflare; the tunnel forwards HTTP to `http://traefik.traefik.svc.cluster.local:80`.
+- SQLite and avatar BLOBs live on an RWO `truenas-iscsi-retain` PVC, with one replica and Recreate rollouts.
+- Optional backups use an RWX `truenas-nfs-retain` PVC. The active database stays on iSCSI.
+- Runtime UID/GID 1001, no elevated privileges, read-only root filesystem and temporary `/tmp` storage.
 
-O hostname **proposto** é `amigo-secreto.nunosousa.dev`. Confirmar antes de criar DNS, configurar o túnel ou imprimir cartões. O certificado do listener `websecure` existente cobre o domínio local; a rota pública preparada usa `web`, seguindo os outros serviços públicos do homelab.
+Developer-facing resources use `secret-santa`: chart, release, Application, namespace and admin Secret names. These manifests have not been deployed, so no existing cluster resources need renaming.
 
-## Construir e verificar
+The **proposed** hostname remains `amigo-secreto.nunosousa.dev`, matching the Portuguese product brand. Confirm it before creating DNS/tunnel entries or printing cards. The existing `websecure` certificate covers the local domain; the prepared public route uses `web`, following other public homelab services.
 
-Na raiz da aplicação, com Docker Desktop ativo:
+## Build and verify
+
+From the application root, with Docker Desktop running:
 
 ```sh
 npm ci
@@ -25,84 +27,84 @@ npm run typecheck
 npm test
 npm run build
 npm run smoke:auth
-docker build --platform linux/amd64 -t amigo-secreto:local .
+docker build --platform linux/amd64 -t secret-santa:local .
 npm run smoke:container
 ```
 
-O teste de container cria e remove apenas os seus containers, volumes e credenciais temporárias. Verifica a arquitetura, UID, raiz só de leitura, criação/edição de membros, avatares, cartões, persistência, backup online e recuperação completa num volume novo. Não usa `.env.local` nem os dados reais.
+The container test creates and removes only its own containers, volumes and temporary credentials. It verifies architecture, UID, read-only root, member creation/editing, avatars, cards, persistence, online backup and complete recovery onto a fresh volume. It does not use `.env.local` or real family data.
 
-Com Helm disponível, validar as duas configurações:
+With Helm installed, validate both configurations:
 
 ```sh
-helm lint deploy/helm/amigo-secreto --strict --set image.tag=test
-helm lint deploy/helm/amigo-secreto --strict --set image.tag=test --set backup.enabled=true
-helm template amigo-secreto deploy/helm/amigo-secreto --namespace amigo-secreto --set image.tag=test --set backup.enabled=true
+helm lint deploy/helm/secret-santa --strict --set image.tag=test
+helm lint deploy/helm/secret-santa --strict --set image.tag=test --set backup.enabled=true
+helm template secret-santa deploy/helm/secret-santa --namespace secret-santa --set image.tag=test --set backup.enabled=true
 ```
 
-`test` serve apenas para renderizar. O chart exige uma tag explícita; não tem uma tag predefinida que possa ser instalada por engano.
+`test` is a rendering placeholder. The chart requires an explicit image tag before installation.
 
-## Publicar a imagem
+## Publish the image
 
-O código da aplicação está em [nunosousa-dev/secret-santa](https://github.com/nunosousa-dev/secret-santa), com o remoto SSH `git@github.com:nunosousa-dev/secret-santa.git`. `.github/workflows/image.yaml` verifica o código e publica `ghcr.io/nunosousa-dev/secret-santa:sha-<commit-completo>` em pushes para `main` e execuções manuais. Pull requests compilam sem publicar. Confirmar o sucesso do workflow antes de configurar a tag no homelab.
+Source lives in [nunosousa-dev/secret-santa](https://github.com/nunosousa-dev/secret-santa), with SSH origin `git@github.com:nunosousa-dev/secret-santa.git`. `.github/workflows/image.yaml` verifies the code and publishes `ghcr.io/nunosousa-dev/secret-santa:sha-<full-commit-sha>` on pushes to `main` and manual runs. Pull requests build without publishing. Check the workflow result before configuring the homelab tag.
 
-O chart usa `ghcr.io/nunosousa-dev/secret-santa`. Usar a tag do commit verificado em `image.tag`. A imagem deve ser pública ou o namespace deve ter um Secret de acesso ao GHCR referenciado em `imagePullSecrets`.
+Set the verified commit tag in `image.tag`. The image must be public, or the namespace must contain a GHCR registry Secret referenced by `imagePullSecrets`.
 
-## Preparar o Secret de administração
+## Prepare the admin Secret
 
-O Deployment espera `amigo-secreto-admin`, no namespace `amigo-secreto`, com a chave `ADMIN_PASSWORD_HASH`. Não guardar a palavra-passe nem um Secret Kubernetes em texto simples no Git. `npm run admin:setup` prepara o hash em `.env.local`; reexecutar altera a credencial local.
+The Deployment expects Secret `secret-santa-admin` in namespace `secret-santa`, with key `ADMIN_PASSWORD_HASH`. Keep plaintext passwords and unencrypted Kubernetes Secrets out of Git. `npm run admin:setup` prepares the hash in `.env.local`; running it again changes the local credential.
 
-O exemplo abaixo lê esse hash em memória e passa o Secret diretamente ao `kubeseal`. Executar na raiz da aplicação, depois de instalar `kubeseal` e selecionar o contexto correto. Guarda apenas o resultado cifrado num ficheiro temporário; não o aplica ao cluster:
+The following example reads the hash into memory and pipes the Secret directly to `kubeseal`. Run it from the application root after installing `kubeseal` and selecting the correct Kubernetes context. Only the encrypted result is saved; nothing is applied to the cluster:
 
 ```sh
-node --env-file=.env.local --input-type=module - <<'NODE' | kubeseal --controller-name sealed-secrets-controller --controller-namespace kube-system --format yaml > /tmp/amigo-secreto-admin-sealed.yaml
+node --env-file=.env.local --input-type=module - <<'NODE' | kubeseal --controller-name sealed-secrets-controller --controller-namespace kube-system --format yaml > /tmp/secret-santa-admin-sealed.yaml
 const hash = process.env.ADMIN_PASSWORD_HASH;
-if (!hash) throw new Error("Configurar ADMIN_PASSWORD_HASH primeiro.");
+if (!hash) throw new Error("Configure ADMIN_PASSWORD_HASH first.");
 process.stdout.write(JSON.stringify({
   apiVersion: "v1",
   kind: "Secret",
-  metadata: { name: "amigo-secreto-admin", namespace: "amigo-secreto" },
+  metadata: { name: "secret-santa-admin", namespace: "secret-santa" },
   type: "Opaque",
   data: { ADMIN_PASSWORD_HASH: Buffer.from(hash).toString("base64") }
 }));
 NODE
 ```
 
-Confirmar que o comando terminou com sucesso e que o ficheiro contém um `SealedSecret` com `encryptedData.ADMIN_PASSWORD_HASH` antes de o copiar para os templates do chart. A cifra fica associada ao nome e namespace indicados. O readiness devolve 503 se o hash estiver ausente ou inválido. Alterar o hash e reiniciar a aplicação invalida as sessões de administração anteriores.
+Confirm the command succeeded and the file contains a `SealedSecret` with `encryptedData.ADMIN_PASSWORD_HASH` before copying it into the chart templates. Encryption is bound to that Secret name and namespace. Readiness returns 503 if the hash is missing or invalid. Changing the hash and restarting the application invalidates previous admin sessions.
 
-## Integrar com o repositório homelab
+## Integrate with the homelab repository
 
-Preparar uma alteração para revisão no homelab:
+Prepare a reviewable change in the homelab:
 
-1. Copiar `deploy/helm/amigo-secreto/` para `kubernetes/apps/amigo-secreto/`.
-2. Definir a imagem/tag publicada e confirmar o hostname em `values.yaml`.
-3. Copiar o SealedSecret validado para `kubernetes/apps/amigo-secreto/templates/admin-sealedsecret.yaml`.
-4. Copiar `deploy/argocd/application.yaml` para `kubernetes/apps/amigo-secreto.yaml`, seguindo o mecanismo existente de descoberta de Applications.
-5. Acrescentar o hostname em `kubernetes/bootstrap/cloudflared/templates/config.yaml`, antes da regra final 404, com o serviço `http://traefik.traefik.svc.cluster.local:80`.
-6. Criar o registo DNS Cloudflare para o túnel existente, seguindo os outros hostnames públicos. Não inventar um identificador de túnel.
-7. Rever os manifests renderizados e só depois publicar/sincronizar a alteração através do fluxo GitOps habitual.
+1. Copy `deploy/helm/secret-santa/` to `kubernetes/apps/secret-santa/`.
+2. Set the published image/tag and confirm the hostname in `values.yaml`.
+3. Copy the validated SealedSecret to `kubernetes/apps/secret-santa/templates/admin-sealedsecret.yaml`.
+4. Copy `deploy/argocd/application.yaml` to `kubernetes/apps/secret-santa.yaml`, following the existing Application discovery mechanism.
+5. Add the hostname to `kubernetes/bootstrap/cloudflared/templates/config.yaml` before the final 404 rule, using service `http://traefik.traefik.svc.cluster.local:80`.
+6. Create the Cloudflare DNS record for the existing tunnel, following other public hostnames. Use the actual tunnel identifier.
+7. Review rendered manifests, then publish/sync through the normal GitOps workflow.
 
-A Application usa sincronização automática. Publicar esses ficheiros no branch acompanhado pelo Argo CD pode iniciar o deploy. Os PVCs têm retenção Helm e `Prune=false` para evitar a sua remoção automática.
+The Application uses automated synchronisation. Publishing these files to the branch watched by Argo CD can start deployment. PVCs have Helm retention and `Prune=false` to prevent automatic deletion.
 
-## Backup e recuperação
+## Backups and recovery
 
-Ativar `backup.enabled: true` depois de verificar permissões de escrita para UID/GID 1001 no NFS. A tarefa corre diariamente às 03:00, fuso `Europe/Lisbon`, com `concurrencyPolicy: Forbid`. É agendada no mesmo nó da aplicação para partilhar o volume RWO; se a aplicação não estiver agendada, o backup pode ficar pendente. Monitorizar o sucesso e o espaço disponível. Não existe eliminação automática de snapshots nem uma cópia externa ao homelab.
+Enable `backup.enabled: true` after verifying NFS write access for UID/GID 1001. The CronJob runs daily at 03:00 in `Europe/Lisbon`, with `concurrencyPolicy: Forbid`. It runs on the application's node to share the RWO volume; if the app is unscheduled, the backup may remain pending. Monitor job success and free space. There is no automatic snapshot deletion or off-site copy.
 
-O script `node scripts/backup.mjs`, incluído na imagem, usa a API de backup SQLite sobre a base ativa montada só para leitura e escreve um snapshot consistente em `/backups`. Inclui dados WAL já confirmados e avatares. Não executa migrações. Não copiar cegamente o ficheiro ativo.
+The image includes `node scripts/backup.mjs`. It uses SQLite's online backup API against the active database mounted read-only and writes a consistent snapshot to `/backups`. This includes committed WAL data and avatars, without running migrations. Use this mechanism rather than copying a live database file.
 
-Para restaurar:
+To restore:
 
-1. Suspender a sincronização automática/reconciliação enquanto decorrer a manutenção, para que o Argo CD não volte a criar a réplica.
-2. Suspender o CronJob e parar a aplicação; preservar o volume anterior para recuperação.
-3. Copiar o snapshot escolhido para um volume iSCSI gravável, com propriedade UID/GID 1001, no caminho `/data/family.sqlite`. Não misturar ficheiros WAL/SHM anteriores com esse snapshot, nem executar a aplicação diretamente no volume NFS de backups.
-4. Iniciar a imagem compatível com esse schema, apontando para o volume restaurado.
-5. Confirmar readiness, login, perfis e avatares; retomar backups e reconciliação.
+1. Suspend automated sync/reconciliation during maintenance so Argo CD cannot recreate the app replica.
+2. Suspend the CronJob and stop the application; preserve the previous volume for recovery.
+3. Copy the chosen snapshot to a writable iSCSI volume at `/data/family.sqlite`, owned by UID/GID 1001. Keep old WAL/SHM files separate. Run from the writable copy rather than the NFS backup volume.
+4. Start an image compatible with the restored schema, pointing at that volume.
+5. Confirm readiness, login, profiles and avatars; resume backups and reconciliation.
 
-Os snapshots incluem hashes de edição e sessões; proteger o acesso aos backups. Uma recuperação pode reintroduzir acessos que existiam no momento do snapshot. Rodar ligações/credenciais quando necessário.
+Snapshots include editing-token hashes and sessions. Protect access to them. Recovery can reintroduce access that existed when the snapshot was taken; rotate links/credentials when needed.
 
-## Atualizações e primeira utilização
+## Upgrades and first use
 
-Antes de atualizar, criar e verificar um backup. Rever as migrações e atualizar a tag imutável no homelab. As migrações correm no arranque; Recreate impede a sobreposição das réplicas da aplicação e implica uma breve indisponibilidade. Reverter apenas a imagem só é seguro se a versão anterior aceitar o schema atual; caso contrário, restaurar também o snapshot correspondente.
+Create and verify a backup before upgrading. Review migrations and update the immutable image tag in the homelab. Migrations run on startup; Recreate prevents overlapping app replicas and causes brief downtime. Rolling back only the image is safe when the previous version accepts the current schema; otherwise restore the matching snapshot as well.
 
-Depois do primeiro deploy, verificar HTTPS a partir de uma rede móvel, login e edição, upload de avatar, persistência após substituição do pod e execução/recuperação de um backup no armazenamento real. A recuperação já foi verificada em volumes Docker; o CSI/NFS do cluster ainda precisa deste teste.
+After the first deployment, verify HTTPS over a mobile network, login/editing, avatar upload, persistence after pod replacement and backup/recovery on real storage. Recovery has already been checked with Docker volumes; cluster CSI/NFS acceptance remains pending.
 
-Criar a família real em `/admin`, remover a indicação de demonstração nas definições e distribuir manualmente as ligações privadas. Imprimir uma folha de `/admin/cartoes` e testar os QR num telemóvel antes de imprimir todos os cartões. Não há seed automático de dados fictícios no container.
+Create real profiles in `/admin`, clear the demonstration flag in family settings and share private editing links manually. Print a sample from `/admin/cards`, fold it twice and scan it on a phone before printing the final cards. The container never seeds fictional data automatically.

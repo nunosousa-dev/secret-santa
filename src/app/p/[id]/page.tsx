@@ -18,8 +18,8 @@ export default async function ProfilePage({ params }: Props) {
   if (!member) notFound();
   const hasPreferences = member.likes.length > 0 || member.avoid.length > 0 || Boolean(member.sizes?.length);
   return (
-    <main id="conteudo" className={`container ${styles.profile}`}>
-      <Link href="/#familia" className={styles.back}><Icon name="back" size={18} />Voltar à família</Link>
+    <main id="content" className={`container ${styles.profile}`}>
+      <Link href="/#family" className={styles.back}><Icon name="back" size={18} />Voltar à família</Link>
       <section className={styles.intro} aria-labelledby="profile-title">
         <Avatar member={member} large />
         <div><p className="eyebrow">UM PRESENTE A PENSAR EM MIM</p><h1 id="profile-title">Olá, sou {member.name}<span aria-hidden="true">.</span></h1>{member.introduction && <p className={styles.introduction}>{member.introduction}</p>}<ul className={styles.interests} aria-label="Interesses">{member.interests.map(interest => <li key={interest}>{interest}</li>)}</ul></div>
@@ -38,7 +38,7 @@ export default async function ProfilePage({ params }: Props) {
           {Boolean(member.sizes?.length) && <section><h2><Icon name="shirt" size={19} />Os meus tamanhos</h2><dl>{member.sizes?.map(size => <div key={size.label}><dt>{size.label}</dt><dd>{size.value}</dd></div>)}</dl></section>}
         </aside>}
       </div>
-      <div className={styles.bottomLink}><Link href="/#familia" className="button button-secondary"><Icon name="back" size={17} />Descobrir o resto da família</Link></div>
+      <div className={styles.bottomLink}><Link href="/#family" className="button button-secondary"><Icon name="back" size={17} />Descobrir o resto da família</Link></div>
     </main>
   );
 }

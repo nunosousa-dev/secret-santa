@@ -13,6 +13,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       return json({ ok: true });
     }
     const token = getStore().rotateLink(id)!;
-    return json({ url: `${appOrigin()}/editar/${encodeURIComponent(id)}#token=${token}` });
+    return json({ url: `${appOrigin()}/edit/${encodeURIComponent(id)}#token=${token}` });
   });
 }

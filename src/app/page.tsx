@@ -26,13 +26,13 @@ export default function Home() {
   const family = getStore().getFamily();
   const members = getStore().listMembers();
   return (
-    <main id="conteudo" className="container">
+    <main id="content" className="container">
       <section className={styles.hero} aria-labelledby="welcome-title">
         <div className={styles.heroCopy}>
           <p className="eyebrow">{family.name.toLocaleUpperCase("pt-PT")} · {family.year}</p>
           <h1 id="welcome-title">Pequenos desejos,<br />grandes <em>sorrisos.</em></h1>
           <p className={styles.welcome}>{family.welcome}</p>
-          <a className="button" href="#familia">Descobrir os desejos <Icon name="arrow" size={18} /></a>
+          <a className="button" href="#family">Descobrir os desejos <Icon name="arrow" size={18} /></a>
           <p className={styles.heroNote}><Icon name="heart" size={14} /> Escolhidos com carinho. Oferecidos em segredo.</p>
         </div>
         <ChristmasIllustration />

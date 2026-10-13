@@ -13,7 +13,7 @@ const portraits = {
 
 /** Uploaded avatars are already resized; vector/initial placeholders remain available. */
 export function Avatar({ member, large = false, eager = false }: { member: Pick<Member, "name" | "avatar" | "avatarId" | "colour">; large?: boolean; eager?: boolean }) {
-  if (member.avatarId) return <span className={`${styles.avatar} ${styles[member.colour]} ${large ? styles.large : ""}`}><Image src={`/avatares/${member.avatarId}`} alt="" width={512} height={512} unoptimized loading={eager ? "eager" : "lazy"} /></span>;
+  if (member.avatarId) return <span className={`${styles.avatar} ${styles[member.colour]} ${large ? styles.large : ""}`}><Image src={`/avatars/${member.avatarId}`} alt="" width={512} height={512} unoptimized loading={eager ? "eager" : "lazy"} /></span>;
   if (member.avatar === "placeholder") {
     const initials = member.name.trim().split(/\s+/).slice(0, 2).map(part => part[0]).join("");
     return <span className={`${styles.avatar} ${styles[member.colour]} ${large ? styles.large : ""}`}><svg viewBox="0 0 120 120" aria-hidden="true"><text x="60" y="64" dominantBaseline="middle" textAnchor="middle" fontFamily="Georgia, serif" fontSize="38" fill="#294b3c">{initials}</text></svg></span>;

@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "amigo.name" . }}
+  name: {{ include "secret-santa.name" . }}
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      {{- include "amigo.selector" . | nindent 6 }}
+      {{- include "secret-santa.selector" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "amigo.selector" . | nindent 8 }}
+        {{- include "secret-santa.selector" . | nindent 8 }}
     spec:
       automountServiceAccountToken: false
       terminationGracePeriodSeconds: 30
@@ -32,7 +32,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: app
-          image: {{ include "amigo.image" . | quote }}
+          image: {{ include "secret-santa.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           securityContext:
             allowPrivilegeEscalation: false
@@ -79,7 +79,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: {{ include "amigo.name" . }}-data
+            claimName: {{ include "secret-santa.name" . }}-data
         - name: tmp
           emptyDir:
             sizeLimit: 128Mi

@@ -10,7 +10,7 @@ import { hashPassword, hashToken, randomToken } from "../src/lib/security";
 import sharp from "sharp";
 import jsQR from "jsqr";
 
-const directory = mkdtempSync(join(tmpdir(), "amigo-http-test-"));
+const directory = mkdtempSync(join(tmpdir(), "secret-santa-http-test-"));
 const database = join(directory, "family.sqlite");
 const store = openStore(database);
 store.seedSamples(); store.close();
@@ -42,8 +42,8 @@ async function request(path: string, body: unknown, cookie = "", method = "POST"
 async function upload(id: string, bytes: Buffer, cookieValue = "", type = "image/png") {
   return fetch(`${origin}/api/admin/members/${id}/avatar`, { method: "POST", headers: { "Content-Type": type, Origin: origin, Cookie: cookieValue }, body: new Uint8Array(bytes) });
 }
-async function printedUrls(cookieValue: string) {
-  const response = await fetch(`${origin}/admin/cartoes`, { headers: { Cookie: cookieValue } });
+async function printedUrls(cookieValue: string, path = "/admin/cards") {
+  const response = await fetch(`${origin}${path}`, { headers: { Cookie: cookieValue } });
   assert.equal(response.status, 200);
   const html = await response.text();
   const urls: string[] = [];
@@ -60,7 +60,7 @@ async function printedUrls(cookieValue: string) {
   return { urls, html };
 }
 const cookie = (response: Response) => { const value = response.headers.get("set-cookie"); assert.ok(value); assert.ok(value.includes("HttpOnly")); assert.ok(value.includes("SameSite=lax")); return value.split(";")[0]; };
-const preferences = { version: 1, introduction: "Preferências persistidas no teste", interests: ["Livros"], likes: [], avoid: [], wishes: [{ title: "Uma ideia guardada" }], sizes: [], note: "" };
+const preferences = { version: 1, introduction: "Preferences saved during the test", interests: ["Books"], likes: [], avoid: [], wishes: [{ title: "A saved gift idea" }], sizes: [], note: "" };
 
 try {
   await start("");
@@ -72,15 +72,18 @@ try {
   await start(encoded);
   assert.equal((await fetch(`${origin}/health/ready`)).status, 200);
   const adminPage = await (await fetch(`${origin}/admin`)).text();
+  assert.match(adminPage, /<html[^>]*lang="pt-PT"/, "The interface must remain in European Portuguese");
   assert.ok(adminPage.includes("Palavra-passe do organizador"));
   assert.ok(!adminPage.includes("Perfis e ligações privadas"), "Anonymous admin view must not include protected data");
-  assert.equal((await fetch(`${origin}/admin/cartoes`, { redirect: "manual" })).status, 307, "Printing must require admin access");
+  assert.equal((await fetch(`${origin}/admin/cards`, { redirect: "manual" })).status, 307, "Printing must require admin access");
+  assert.equal((await fetch(`${origin}/admin/cartoes`, { redirect: "manual" })).status, 307, "Legacy printing URLs must require the same admin access");
   assert.equal((await request("/api/admin/login", { password }, "", "POST", "https://wrong.example")).status, 403);
   assert.equal((await request("/api/admin/login", { password }, "", "POST", null)).status, 403);
   assert.equal((await request("/api/admin/login", { password: "wrong" })).status, 401);
   const adminCookie = cookie(await request("/api/admin/login", { password }));
   const originalCards = await printedUrls(adminCookie);
   assert.equal(originalCards.urls.length, 6);
+  assert.deepEqual((await printedUrls(adminCookie, "/admin/cartoes")).urls, originalCards.urls, "Legacy card URLs must preserve public QR destinations");
   assert.equal((await request("/api/admin/members", { name: "Forbidden" })).status, 403);
   assert.equal((await request("/api/admin/members/m-001/link", {})).status, 403);
   assert.equal((await request("/api/members/m-001", preferences, "", "PATCH")).status, 403);
@@ -88,6 +91,7 @@ try {
   assert.equal(linkResponse.status, 200);
   assert.match(linkResponse.headers.get("cache-control") ?? "", /no-store/);
   const { url } = await linkResponse.json() as { url: string };
+  assert.equal(new URL(url).pathname, "/edit/m-001", "New editing links must use the English route");
   const token = new URLSearchParams(new URL(url).hash.slice(1)).get("token")!;
   assert.equal(token.length, 43);
   assert.equal((await request("/api/edit/session", { memberId: "m-002", token })).status, 401);
@@ -106,8 +110,13 @@ try {
   const publicPage = await (await fetch(`${origin}/p/m-001`)).text();
   assert.ok(publicPage.includes(preferences.introduction));
   assert.ok(!publicPage.includes(token) && !publicPage.includes(hashToken(token)) && !publicPage.includes(encoded));
-  assert.ok(!(await (await fetch(`${origin}/editar/m-001`)).text()).includes("Guardar preferências"));
-  assert.ok((await (await fetch(`${origin}/editar/m-001`, { headers: { Cookie: memberCookie } })).text()).includes("Guardar preferências"));
+  assert.ok(!(await (await fetch(`${origin}/edit/m-001`)).text()).includes("Guardar preferências"));
+  assert.ok((await (await fetch(`${origin}/edit/m-001`, { headers: { Cookie: memberCookie } })).text()).includes("Guardar preferências"));
+  const legacyEdit = await fetch(`${origin}/editar/m-001#token=${token}`, { redirect: "manual", headers: { Cookie: memberCookie } });
+  assert.equal(legacyEdit.status, 200, "Legacy editing URLs must work without redirecting the browser-held fragment");
+  assert.match(legacyEdit.headers.get("cache-control") ?? "", /no-store/);
+  const legacyEditHtml = await legacyEdit.text();
+  assert.ok(legacyEditHtml.includes("Guardar preferências") && !legacyEditHtml.includes(token));
   const replacementResponse = await request("/api/admin/members/m-001/link", {}, adminCookie);
   const replacement = (await replacementResponse.json() as { url: string }).url;
   const replacementToken = new URLSearchParams(new URL(replacement).hash.slice(1)).get("token")!;
@@ -117,32 +126,38 @@ try {
   assert.equal((await request("/api/admin/members/m-001/link", { revoke: true }, adminCookie)).status, 200);
   assert.equal((await request("/api/members/m-001", { ...preferences, version: 2 }, replacementCookie, "PATCH")).status, 403);
   assert.equal((await request("/api/edit/session", { memberId: "m-001", token: replacementToken })).status, 401);
-  const created = await request("/api/admin/members", { name: "Perfil de teste" }, adminCookie);
+  const created = await request("/api/admin/members", { name: "Test profile" }, adminCookie);
   assert.equal(created.status, 201);
   const createdId = (await created.json() as { id: string }).id;
   assert.equal((await fetch(`${origin}/p/${createdId}`)).status, 200);
-  assert.equal((await request(`/api/admin/members/${createdId}`, { name: "Novo nome", version: 1 }, memberCookie, "PATCH")).status, 403);
-  assert.equal((await request(`/api/admin/members/${createdId}`, { name: "Nome alterado", version: 1 }, adminCookie, "PATCH")).status, 200);
+  assert.equal((await request(`/api/admin/members/${createdId}`, { name: "New name", version: 1 }, memberCookie, "PATCH")).status, 403);
+  assert.equal((await request(`/api/admin/members/${createdId}`, { name: "Updated name", version: 1 }, adminCookie, "PATCH")).status, 200);
   assert.equal((await request(`/api/admin/members/${createdId}`, { name: "Stale", version: 1 }, adminCookie, "PATCH")).status, 409);
-  assert.ok((await (await fetch(`${origin}/p/${createdId}`)).text()).includes("Nome alterado"));
+  assert.ok((await (await fetch(`${origin}/p/${createdId}`)).text()).includes("Updated name"));
   assert.equal((await upload(createdId, Buffer.from("invalid"), adminCookie)).status, 400);
   assert.equal((await upload(createdId, Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"/>'), adminCookie)).status, 400, "Do not trust a forged PNG content type");
   assert.equal((await upload(createdId, Buffer.alloc(5 * 1024 * 1024 + 1), adminCookie)).status, 413);
   assert.equal((await upload(createdId, image, adminCookie)).status, 200);
   const avatarProfile = await (await fetch(`${origin}/p/${createdId}`)).text();
-  const avatarPath = avatarProfile.match(/src="(\/avatares\/[^\"]+)"/)?.[1];
+  const avatarPath = avatarProfile.match(/src="(\/avatars\/[^\"]+)"/)?.[1];
   assert.ok(avatarPath);
   const avatarResponse = await fetch(`${origin}${avatarPath}`);
   assert.equal(avatarResponse.status, 200);
   assert.equal(avatarResponse.headers.get("content-type"), "image/webp");
-  const avatarMetadata = await sharp(Buffer.from(await avatarResponse.arrayBuffer())).metadata();
+  const avatarBytes = Buffer.from(await avatarResponse.arrayBuffer());
+  const avatarMetadata = await sharp(avatarBytes).metadata();
   assert.equal(avatarMetadata.width, 512); assert.equal(avatarMetadata.height, 512);
+  const legacyAvatarPath = avatarPath.replace("/avatars/", "/avatares/");
+  const legacyAvatar = await fetch(`${origin}${legacyAvatarPath}`);
+  assert.equal(legacyAvatar.status, 200);
+  assert.equal(legacyAvatar.headers.get("content-type"), "image/webp");
+  assert.deepEqual(Buffer.from(await legacyAvatar.arrayBuffer()), avatarBytes);
   const sevenCards = await printedUrls(adminCookie);
   assert.equal(sevenCards.urls.length, 7);
   assert.ok(sevenCards.urls.includes(`${origin}/p/${createdId}`));
   assert.ok(sevenCards.html.includes(avatarPath));
   assert.ok(!sevenCards.html.includes(token), "Editing tokens must never appear in cards");
-  const settings = { version: 1, name: "Natal dos testes", year: 2027, welcome: "Bem-vindos à nossa família de teste", exchangeDate: "2027-12-24", budget: { amount: 25.5, currency: "EUR" }, demo: false };
+  const settings = { version: 1, name: "Test Christmas", year: 2027, welcome: "Welcome to our test family", exchangeDate: "2027-12-24", budget: { amount: 25.5, currency: "EUR" }, demo: false };
   assert.equal((await request("/api/admin/family", { ...settings, exchangeDate: "2027-02-30" }, adminCookie, "PATCH")).status, 400);
   assert.equal((await request("/api/admin/family", settings, adminCookie, "PATCH")).status, 200);
   assert.equal((await request("/api/admin/family", settings, adminCookie, "PATCH")).status, 409);
@@ -155,6 +170,7 @@ try {
   assert.equal((await request(`/api/admin/members/${createdId}`, { action: "archive" }, adminCookie)).status, 200);
   assert.equal((await fetch(`${origin}/p/${createdId}`)).status, 404);
   assert.equal((await fetch(`${origin}${avatarPath}`)).status, 404);
+  assert.equal((await fetch(`${origin}${legacyAvatarPath}`)).status, 404, "Legacy avatar routes must also hide archived members");
   assert.equal((await request(`/api/members/${createdId}`, { ...preferences, version: 3 }, archivedCookie, "PATCH")).status, 403);
   assert.equal((await printedUrls(adminCookie)).urls.length, 6);
   assert.equal((await request(`/api/admin/members/${createdId}`, { action: "restore" }, adminCookie)).status, 200);
@@ -175,7 +191,7 @@ try {
   await stop();
   await start(await hashPassword(randomToken()));
   assert.equal((await request("/api/admin/members", { name: "Forbidden" }, beforeRotation)).status, 403, "Credential changes must invalidate admin sessions");
-  console.log("Passed: protected administration/printing, CSRF, member isolation, upload validation, renaming, family settings, archive/restore, QR decoding, link/session revocation, and persistence across restarts.");
+  console.log("Passed: Portuguese UI, English routes and legacy aliases, protected administration/printing, CSRF, member isolation, upload validation, renaming, family settings, archive/restore, QR decoding, link/session revocation, and persistence across restarts.");
 } finally {
   await stop(); rmSync(directory, { recursive: true, force: true });
 }

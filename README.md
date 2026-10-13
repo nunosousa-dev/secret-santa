@@ -1,18 +1,22 @@
-# Amigo Secreto
+# Secret Santa
 
-Espaço de Natal para a família: perfis públicos com desejos e preferências, com sorteio físico de cartões. Interface em português de Portugal, desenhada primeiro para telemóveis.
+A Christmas space for the family: public gift wishes and preferences, with a physical card draw. The application is branded **Amigo Secreto** and its interface is in European Portuguese, designed for phones first.
 
-## Estado atual
+## Language conventions
 
-Página pública da família, pesquisa por nome/interesse, perfis individuais e edição de preferências. Os dados e avatares são guardados em SQLite, com schema Drizzle, migrações versionadas e backups consistentes.
+Documentation, identifiers, comments, command-line tools and developer diagnostics use English. Family-facing labels, accessibility text, metadata, validation messages, print instructions and fictional profile content use Portuguese (`pt-PT`). Member-written content stays in the language its author chooses.
 
-A administração em `/admin` permite criar, renomear, arquivar e restaurar membros, carregar avatares, editar preferências e definições da família, e emitir/substituir/revogar ligações privadas. Está bloqueada até configurar uma palavra-passe. Os cartões com avatar, nome e QR estão em `/admin/cartoes`. O sorteio continua físico.
+## Current status
 
-A imagem Docker e o chart Helm estão preparados e verificados localmente para o homelab. A integração Argo CD, publicação da imagem e exposição do endereço final ainda não foram executadas. Consultar [deploy/README.md](deploy/README.md).
+The application includes a public family directory with name/interest search, individual profiles and preference editing. SQLite stores profiles, settings and avatars, with a Drizzle schema, versioned migrations and consistent backups.
 
-## Executar localmente
+Protected administration at `/admin` supports member creation, renaming, archiving/restoration, avatar uploads, preferences, family settings and issuing/replacing/revoking private editing links. Administration stays locked until a password is configured. Printable avatar/name/QR cards are available at `/admin/cards`; the draw remains physical.
 
-Requisitos: Node.js 22 ou superior e npm.
+The Docker image and Helm chart are prepared and locally verified for the homelab. The GitHub image workflow is configured; check its result before selecting a deployment tag. Live Argo CD integration and public access remain pending. See [deployment instructions](deploy/README.md).
+
+## Run locally
+
+Requirements: Node.js 22 or later and npm. The container and CI use Node.js 24.
 
 ```sh
 npm ci
@@ -21,53 +25,57 @@ npm run admin:setup
 npm run dev
 ```
 
-`admin:setup` pede e confirma uma palavra-passe sem a mostrar no terminal. Escreve apenas o hash scrypt em `.env.local` (ignorado pelo Git, permissões 0600). Não há palavra-passe predefinida. Reexecutar o comando e reiniciar o servidor permite recuperar o acesso e invalida sessões de administração anteriores.
+`admin:setup` asks for and confirms a password without displaying it. It writes only the scrypt hash to `.env.local` (Git-ignored, mode 0600). There is no default password. To recover access, run the command again, type `YES` to confirm replacement and restart the server. Changing the hash invalidates previous admin sessions.
 
-Uma base de dados nova começa sem membros. Para experimentar com seis perfis fictícios, executar `npm run db:seed` antes de acrescentar pessoas reais. Este comando recusa alterar uma família que já tenha membros. A indicação de pré-visualização aparece apenas nas bases de dados com dados fictícios. A pasta local deste projeto já foi preparada com esses exemplos.
+A new database starts without members. To try six fictional profiles, run `npm run db:seed` before adding real people. Seeding refuses to change a family that already has members. The preview notice appears only in databases marked as demonstrations.
 
-Abrir http://localhost:3000 e visitar `/admin` para entrar. O servidor de desenvolvimento escuta em `0.0.0.0`. Para testar num telemóvel na mesma rede, definir `APP_URL=http://<IP-local-do-computador>:3000` em `.env.local`, reiniciar e usar esse mesmo endereço no computador e no telemóvel. `APP_URL` define a origem autorizada para guardar formulários e emitir ligações. Não usar o servidor de desenvolvimento como serviço de produção exposto à Internet.
+Open http://localhost:3000 and visit `/admin` to sign in. Development listens on `0.0.0.0`. To test a phone on the same network, set `APP_URL=http://<computer-LAN-IP>:3000` in `.env.local`, restart and use that address on both devices. `APP_URL` defines the authorised origin for saving forms and issuing links. Use the production runtime for an Internet-facing service.
 
-## Configuração e acesso
+## Configuration and access
 
-Consultar `.env.example`:
+See `.env.example`:
 
-- `APP_URL`: origem canónica do site. Em produção, configurar o endereço HTTPS final.
-- `DATABASE_PATH`: ficheiro SQLite; por omissão `./data/family.sqlite`. O arranque standalone resolve o caminho antes de mudar de diretório.
-- `ADMIN_PASSWORD_HASH`: hash gerado por `admin:setup`; nunca a palavra-passe em texto simples. Em Kubernetes, usar um Secret.
+- `APP_URL`: canonical site origin; use the final HTTPS address in production.
+- `DATABASE_PATH`: SQLite file, defaulting to `./data/family.sqlite`. The standalone launcher resolves it before changing directory.
+- `ADMIN_PASSWORD_HASH`: hash generated by `admin:setup`, never a plaintext password. Supply it through a Secret in Kubernetes.
 
-A consulta dos perfis é pública. A edição requer uma sessão do organizador ou uma ligação privada para esse membro. O organizador pode copiar uma ligação recém-criada; mais tarde só pode substituí-la, porque o token original não é persistido.
+Browsing profiles is public. Editing requires an organiser session or a private link for that member. The organiser can copy a newly issued link; later they can only replace it, because the original token is never persisted.
 
-As ligações têm o formato `/editar/<id>#token=<token-aleatório>`. O fragmento não é enviado em pedidos HTTP. A pessoa carrega em “Abrir a minha edição”; o fragmento é removido do endereço e o token é trocado por uma sessão. Apenas hashes SHA-256 de tokens de 32 bytes aleatórios ficam na base de dados.
+Editing links use `/edit/<id>#token=<random-token>`. The fragment is not sent in HTTP requests. Selecting the Portuguese access button removes it from the address and exchanges the token for a session. Only SHA-256 hashes of 32-byte random tokens are stored.
 
-- Sessões de administração: 12 horas; sessões de membros: 7 dias.
-- Ligações privadas: reutilizáveis até revogação/substituição. Essa ação invalida também as sessões associadas.
-- Cookies HttpOnly e SameSite=Lax; Secure quando `APP_URL` usa HTTPS.
-- Todos os pedidos de alteração validam a origem e o acesso no servidor; não basta esconder botões.
-- O login do organizador tem um limite global de 20 tentativas por 15 minutos, persistido na base de dados. Não depende de cabeçalhos de IP enviados pelo cliente.
-- Guardar um formulário desatualizado devolve um conflito em vez de substituir alterações mais recentes.
+- Admin sessions last 12 hours; member sessions last 7 days.
+- Private links remain reusable until revoked/replaced, which also invalidates associated sessions.
+- Cookies use HttpOnly and SameSite=Lax, plus Secure when `APP_URL` uses HTTPS.
+- Every mutation checks origin and permission on the server.
+- Organiser login has a global limit of 20 attempts per 15 minutes, persisted in SQLite. It does not trust client-supplied IP headers.
+- Stale forms return a conflict instead of overwriting newer changes.
 
-## Base de dados e backup
+Routes and source directories use English. Compatibility rewrites preserve previously shared `/editar/<id>`, `/avatares/<id>` and `/admin/cartoes` URLs, including browser-held editing fragments. Public profile URLs remain `/p/<stable-id>`, so existing QR codes stay valid.
+
+## Database and backups
 
 ```sh
 npm run db:migrate
 npm run db:backup
 ```
 
-As migrações são aplicadas automaticamente ao abrir a base de dados; o comando permite executá-las antecipadamente. O backup usa a API SQLite e, por omissão, cria `data/backups/family-<timestamp>.sqlite`. Pode ser indicado outro destino com `npm run db:backup -- /caminho/backup.sqlite`.
+Migrations run automatically when the database opens; the command also allows running them ahead of time. Backups use SQLite's online backup API and default to `data/backups/family-<timestamp>.sqlite`. Supply another destination with `npm run db:backup -- /path/to/backup.sqlite`.
 
-O backup inclui preferências, avatares, definições e registos de acesso. Para restaurar, parar o servidor, preservar o estado anterior e copiar o snapshot para uma pasta gravável, configurando `DATABASE_PATH` para essa cópia antes de reiniciar. Não reutilizar ficheiros `-wal`/`-shm` da base anterior. Não executar diretamente sobre o snapshot de backup montado só para leitura.
+Snapshots include preferences, avatar BLOBs, settings and access records. To restore, stop the server, preserve the previous state and copy the snapshot to a writable directory. Set `DATABASE_PATH` to that copy before restarting. Keep old `-wal`/`-shm` files separate from the restored snapshot. The application needs a writable working copy rather than a read-only backup mount.
 
-O homelab usa uma única réplica, estratégia Recreate e volume RWO `truenas-iscsi-retain` para o SQLite. O NFS `truenas-nfs-retain` serve apenas para snapshots de backup. A tarefa diária opcional está desativada por omissão e não elimina backups antigos. Os testes verificam a recuperação de perfis e avatares numa cópia gravável e num volume Docker novo. As pastas `data/` e `uploads/` estão ignoradas pelo Git.
+The homelab configuration uses one replica, Recreate rollouts and an RWO `truenas-iscsi-retain` volume for SQLite. `truenas-nfs-retain` holds backup snapshots only. Optional daily backups are disabled by default and do not delete old snapshots. Tests verify profile/avatar recovery into a writable copy and a fresh Docker volume. `data/` and `uploads/` are Git-ignored.
 
-## Avatares, membros e cartões
+## Avatars, members and printable cards
 
-Só o organizador pode carregar avatares: PNG, JPEG ou WebP sem animação, até 5 MB e 25 megapíxeis. O servidor valida o conteúdo, corrige a orientação, recorta ao centro para 512 × 512 e guarda WebP sem metadados. Sem upload, aparece um avatar de substituição.
+Only the organiser can upload avatars: non-animated PNG, JPEG or WebP, up to 5 MB and 25 megapixels. The server checks actual content, corrects orientation, centre-crops to 512 × 512 and stores WebP without metadata. Profiles without an upload use a fallback avatar.
 
-Renomear um membro mantém o endereço público e o QR. Arquivar oculta o membro e torna o perfil e avatar indisponíveis, revogando ligações e sessões de edição. Restaurar recupera o mesmo perfil; é necessário emitir uma nova ligação privada.
+Renaming preserves public URLs and QR codes. Archiving hides a member and makes their profile/avatar unavailable, revoking editing links and sessions. Restoration keeps the same profile ID; issue a new private editing link afterwards.
 
-Em `/admin/cartoes`, cada folha A4 contém até seis cartões de 88 × 84 mm com contorno de corte e linhas horizontal e vertical de dobra. O avatar fica no quadrante superior esquerdo e o nome no superior direito. O QR de 30 mm fica no quadrante inferior direito, afastado cerca de 6 mm da dobra horizontal e 7 mm da vertical. Dobrar ao meio em cada direção, com o conteúdo para dentro, e abrir o cartão para ler o QR. Cada cartão contém apenas avatar, nome e QR do perfil público. Definir primeiro o `APP_URL` definitivo. Usar impressão a 100%, papel A4 e desativar cabeçalhos/rodapés do browser; “Guardar como PDF” usa o mesmo percurso. A descodificação dos QR é verificada automaticamente; falta imprimir uma amostra e testar a leitura num telemóvel.
+`/admin/cards` fits six 88 × 84 mm cards on A4, with cutting outlines and horizontal/vertical fold guides. Avatar and name occupy the upper-left and upper-right quarters. The 30 mm QR occupies the lower-right quarter, about 6 mm clear of the horizontal fold and 7 mm clear of the vertical fold. Fold once in each direction, contents inward, and open to scan. Cards contain only avatar, name and public-profile QR.
 
-## Verificar e compilar
+Set the final `APP_URL` before printing. Use A4, 100% scale and disable browser headers/footers. Browser save-as-PDF uses the same layout. QR decoding is checked automatically; real printing, folding and phone scanning remain acceptance checks.
+
+## Verify and build
 
 ```sh
 npm run lint
@@ -78,51 +86,51 @@ npm run smoke:auth
 npm start
 ```
 
-Com o servidor a correr, `npm run smoke` verifica respostas HTTP da página inicial, stylesheet, todos os perfis ligados, páginas inexistentes e entrada protegida da administração. Para outro endereço, definir `BASE_URL`.
+With a server running, `npm run smoke` checks HTTP responses for the landing page, stylesheet, linked profiles, missing pages and protected administration. Set `BASE_URL` for another address.
 
-`npm test` verifica credenciais, isolamento de membros, revogação, expiração, conflitos de escrita, imagens, migrações, backups, QR e limitação de tentativas. `smoke:auth` inicia servidores de produção temporários com uma base de dados isolada e credenciais de teste, verificando administração, edição, avatares, cartões e persistência após reinícios. Não altera os perfis nem a palavra-passe locais.
+`npm test` covers credentials, member isolation, revocation, expiry, stale writes, image processing, migrations, backups, QR decoding and login limits. `smoke:auth` starts temporary production servers with isolated databases and test credentials, exercising administration, editing, avatars, cards and persistence across restarts. Local profiles and credentials are untouched.
 
-O build configura a saída `standalone` e copia os assets estáticos necessários; `npm start` executa esse servidor. Com Docker Desktop ativo:
+The build uses standalone output and copies its static assets; `npm start` launches that server. With Docker Desktop running:
 
 ```sh
-docker build --platform linux/amd64 -t amigo-secreto:local .
+docker build --platform linux/amd64 -t secret-santa:local .
 npm run smoke:container
 ```
 
-O teste usa volumes e credenciais próprios, removidos no fim. Verifica o runtime sem root, sistema de ficheiros de raiz só de leitura, imagens nativas, persistência após reinício, backup com o serviço ativo e recuperação num volume novo. A imagem `amigo-secreto:local` fica disponível. `/health/live` verifica o processo; `/health/ready` exige SQLite acessível e um hash de administração válido.
+The container test creates isolated volumes and credentials and removes them afterwards. It verifies non-root execution, a read-only root filesystem, native image processing, restart persistence, online backup and full recovery onto a fresh volume. The `secret-santa:local` image remains available. `/health/live` checks the process; `/health/ready` requires accessible SQLite and a valid admin password hash.
 
-## Estrutura
+## Project structure
 
-- `src/app`: rotas, layout e estilos das páginas.
-- `src/components`: avatares, diretório pesquisável, formulários e administração.
-- `src/lib/types.ts`: contratos de família, membro e desejo; sem dependência de um motor de base de dados.
-- `src/lib/db`: schema Drizzle, migrações e operações SQLite.
-- `src/lib/auth.ts`, `security.ts`, `http.ts`: sessões, credenciais e proteção de alterações.
-- `src/lib/sample-data.ts`: dados fictícios para seed e formatação de datas/valores.
-- `scripts/`: configuração, migrações, backup e verificações HTTP/container.
-- `tests/`: verificações de acesso, administração, imagens, QR e persistência.
-- `deploy/`: chart Helm, Application Argo CD e instruções para o homelab.
-- `.github/workflows/image.yaml`: verificações e publicação GHCR por commit, quando o projeto estiver num repositório GitHub.
-- `IMPLEMENTATION_PLAN.md`: requisitos, fases e decisões pendentes.
+- `src/app`: routes, layouts and page styles.
+- `src/components`: avatars, searchable directory, forms and administration.
+- `src/lib/types.ts`: family, member and wish contracts.
+- `src/lib/db`: Drizzle schema, migrations and SQLite operations.
+- `src/lib/auth.ts`, `security.ts`, `http.ts`: sessions, credentials and mutation protection.
+- `src/lib/sample-data.ts`: Portuguese fictional content and date/currency formatting.
+- `scripts/`: credential setup, migrations, backups and HTTP/container checks.
+- `tests/`: access, administration, image, QR and persistence checks.
+- `deploy/`: Helm chart, Argo CD Application and homelab instructions.
+- `.github/workflows/image.yaml`: verification and commit-tagged GHCR publishing.
+- `IMPLEMENTATION_PLAN.md`: requirements, milestones and remaining decisions.
 
-## Percursos de verificação
+## Acceptance walkthrough
 
-- Abrir `/`, pesquisar `Ines` e confirmar que aparece Inês; limpar a pesquisa.
-- Pesquisar um termo inexistente e usar “Ver toda a família”.
-- Abrir os seis perfis; Tomás demonstra a lista vazia e Inês demonstra tamanhos omitidos.
-- Abrir `/p/desconhecido` e confirmar a página 404 em português.
-- Entrar em `/admin`, criar uma ligação privada e abri-la numa janela sem sessão de administração.
-- Editar preferências, guardar e confirmar as alterações no perfil público noutro dispositivo.
-- Substituir/revogar a ligação e confirmar que a sessão de edição anterior deixa de poder guardar.
-- Carregar um avatar, alterar o nome e confirmar que o QR anterior continua a abrir o mesmo perfil.
-- Arquivar/restaurar um membro e emitir uma nova ligação de edição.
-- Rever as definições da família, pré-visualizar a impressão A4 e ler os QR de uma folha impressa.
-- Verificar navegação por teclado e layouts de 320, 390 e 430 px, além de desktop.
+- Open `/`, search for `Ines` and confirm Inês appears; clear the search.
+- Search for a missing term and use the button to show the full family.
+- Browse the fictional profiles: Tomás has an empty wish list and Inês omits sizes.
+- Open `/p/unknown` and confirm the Portuguese 404 page.
+- Sign in at `/admin`, issue a private link and open it without an admin session.
+- Edit preferences and confirm the public profile updates on another device after refreshing.
+- Replace/revoke the link and confirm the previous editing session can no longer save.
+- Upload an avatar, rename the member and confirm the previous QR still opens their profile.
+- Archive/restore a member and issue a new editing link.
+- Review family settings, preview A4 output, print a sample, fold twice and scan it.
+- Check keyboard navigation and 320, 390 and 430 px layouts, plus desktop.
 
-Não são carregadas fontes nem imagens de serviços externos. `noindex` está ativo para a pré-visualização; as páginas continuam públicas e acessíveis pelo URL.
+Fonts and images are served locally. `noindex` is enabled; profiles remain public and accessible by URL.
 
-## Limitações de verificação
+## Verification limits
 
-- Lint, TypeScript e build de produção são verificados separadamente dos testes visuais.
-- A ferramenta de browser não recebeu permissão para abrir o servidor local nesta sessão. Pesquisa interativa, layouts e utilização real em iOS/Android aguardam verificação visual.
-- Na instalação inicial, `npm audit --omit=dev` não encontrou vulnerabilidades nas dependências de produção. O audit completo identificou cinco entradas de severidade alta na cadeia de desenvolvimento `eslint-config-next → fast-glob → micromatch → braces`. A versão publicada mais recente de `braces` continua afetada; não foi aplicada uma alteração forçada de major do framework para contornar o aviso. Rever esta cadeia quando existir uma correção compatível.
+- Lint, TypeScript and production builds are separate from visual acceptance.
+- Browser access to the local preview was denied during development. Interactive search, layouts and real iOS/Android use still need visual review.
+- The initial `npm audit --omit=dev` found no production dependency vulnerabilities. The full audit reported five high-severity entries in the development chain `eslint-config-next → fast-glob → micromatch → braces`, with no compatible fix available at that check. Revisit the advisory when updating dependencies.

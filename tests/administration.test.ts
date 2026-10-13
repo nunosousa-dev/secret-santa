@@ -64,7 +64,7 @@ test("Renaming, avatar replacement, archiving and restoration preserve IDs and r
 });
 
 test("Avatars and family settings restore together from a consistent database backup", async () => {
-  const directory = mkdtempSync(join(tmpdir(), "amigo-avatar-backup-"));
+  const directory = mkdtempSync(join(tmpdir(), "secret-santa-avatar-backup-"));
   const store = openStore(join(directory, "family.sqlite"));
   try {
     store.seedSamples();
@@ -72,29 +72,29 @@ test("Avatars and family settings restore together from a consistent database ba
     store.saveAvatar("m-002", bytes);
     const avatarId = store.getMember("m-002")!.avatarId!;
     const family = store.getFamily();
-    assert.equal(store.saveFamily(family.version, { ...family, name: "Natal dos testes", demo: false }), true);
+    assert.equal(store.saveFamily(family.version, { ...family, name: "Test Christmas", demo: false }), true);
     assert.equal(store.saveFamily(family.version, { ...family, name: "Overwrite", demo: false }), false);
     await store.sqlite.backup(join(directory, "backup.sqlite"));
     const backup = openStore(join(directory, "backup.sqlite"));
-    try { assert.deepEqual(backup.getAvatar(avatarId), bytes); assert.equal(backup.getFamily().name, "Natal dos testes"); } finally { backup.close(); }
+    try { assert.deepEqual(backup.getAvatar(avatarId), bytes); assert.equal(backup.getFamily().name, "Test Christmas"); } finally { backup.close(); }
   } finally { store.close(); rmSync(directory, { recursive: true, force: true }); }
 });
 
 test("The avatar/archive migration upgrades a version-one database without losing member data", () => {
-  const directory = mkdtempSync(join(tmpdir(), "amigo-migration-test-"));
+  const directory = mkdtempSync(join(tmpdir(), "secret-santa-migration-test-"));
   const filename = join(directory, "old.sqlite");
   const old = new Database(filename);
   old.exec(migrations[0].sql);
   old.exec("CREATE TABLE schema_migrations (version INTEGER PRIMARY KEY); INSERT INTO schema_migrations VALUES (1)");
-  old.prepare("INSERT INTO members (id, data) VALUES (?, ?)").run("original", JSON.stringify({ id: "original", name: "Nome original", avatar: "placeholder", colour: "sage", interests: [], likes: [], avoid: [] }));
+  old.prepare("INSERT INTO members (id, data) VALUES (?, ?)").run("original", JSON.stringify({ id: "original", name: "Original name", avatar: "placeholder", colour: "sage", interests: [], likes: [], avoid: [] }));
   old.close();
   const upgraded = openStore(filename);
-  try { assert.equal(upgraded.getMember("original")?.name, "Nome original"); assert.equal(upgraded.getMember("original")?.avatarId, undefined); }
+  try { assert.equal(upgraded.getMember("original")?.name, "Original name"); assert.equal(upgraded.getMember("original")?.avatarId, undefined); }
   finally { upgraded.close(); rmSync(directory, { recursive: true, force: true }); }
 });
 
 test("QR codes decode to permanent public profile URLs and card sheets contain at most six members", async () => {
-  const origin = "https://natal.familia.example";
+  const origin = "https://christmas.family.example";
   const id = "ed1eff2a-9b16-4470-9287-4ba1fcce7370";
   const expected = profileUrl(origin, id);
   const dataUrl = await profileQr(origin, id);
@@ -102,13 +102,13 @@ test("QR codes decode to permanent public profile URLs and card sheets contain a
   const dimension = (QRCode.create(expected, { errorCorrectionLevel: "M" }).modules.size + 8) * 8;
   const { data, info } = await sharp(svg).resize(dimension, dimension, { kernel: "nearest" }).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   assert.equal(jsQR(new Uint8ClampedArray(data), info.width, info.height)?.data, expected);
-  assert.ok(!expected.includes("editar") && !expected.includes("token"));
+  assert.ok(!expected.includes("edit") && !expected.includes("token"));
   assert.deepEqual(cardSheets(Array.from({ length: 13 }, (_, index) => index)).map(page => page.length), [6, 6, 1]);
   assert.deepEqual(cardSheets([]), []);
 });
 
 test("Family settings reject impossible dates and unsupported currency and preserve budget cents", () => {
-  const valid = { version: 1, name: "Família", year: 2026, welcome: "Olá", demo: false };
+  const valid = { version: 1, name: "Family", year: 2026, welcome: "Hello", demo: false };
   assert.equal(familySettingsSchema.safeParse(valid).success, true);
   assert.equal(familySettingsSchema.safeParse({ ...valid, exchangeDate: "2026-02-30" }).success, false);
   assert.equal(familySettingsSchema.safeParse({ ...valid, budget: { amount: 25, currency: "INVALID" } }).success, false);

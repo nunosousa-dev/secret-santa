@@ -1,5 +1,5 @@
 apiVersion: v2
-name: amigo-secreto
+name: secret-santa
 description: Family Christmas gift profiles and printable Secret Santa cards
 type: application
 version: 0.1.0

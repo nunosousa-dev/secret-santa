@@ -55,7 +55,7 @@ export function AdminPanel({ members, archived, family }: { members: AdminMember
   }
 
   return <>
-    <div className={styles.actions}><Link className="button button-secondary" href="/admin/cartoes">Preparar cartões do sorteio</Link></div>
+    <div className={styles.actions}><Link className="button button-secondary" href="/admin/cards">Preparar cartões do sorteio</Link></div>
     <FamilySettings family={family} />
     <section className={styles.card}><h2>Acrescentar à família</h2><form className={styles.form} onSubmit={create}><div className={styles.field}><label htmlFor="new-name">Nome</label><input id="new-name" name="name" required maxLength={80} autoComplete="off" disabled={Boolean(busy)} /></div><button type="submit" className="button" disabled={Boolean(busy)}>{busy === "new" ? "A criar…" : "Criar perfil"}</button></form></section>
     {error && <p role="alert" className={`${styles.status} ${styles.error}`}>{error}</p>}
@@ -64,7 +64,7 @@ export function AdminPanel({ members, archived, family }: { members: AdminMember
       <ul className={styles.memberList}>{members.map(member => <li className={styles.memberRow} key={member.id}>
         <h3 className={styles.memberName}>{member.name}</h3>
         <MemberTools member={member} />
-        <div className={styles.actions}><Link className={styles.textButton} href={`/p/${member.id}`}>Ver perfil público</Link><Link className={styles.textButton} href={`/editar/${member.id}`}>Editar preferências</Link></div>
+        <div className={styles.actions}><Link className={styles.textButton} href={`/p/${member.id}`}>Ver perfil público</Link><Link className={styles.textButton} href={`/edit/${member.id}`}>Editar preferências</Link></div>
         <div className={styles.actions}><button type="button" className="button button-secondary" disabled={Boolean(busy)} onClick={() => changeLink(member)}>{busy === member.id ? "A atualizar…" : member.hasLink ? "Substituir ligação privada" : "Criar ligação privada"}</button>{member.hasLink && <button className={styles.textButton} type="button" disabled={Boolean(busy)} onClick={() => changeLink(member, true)}>Revogar ligação</button>}</div>
         {links[member.id] && <div className={styles.privateLink}><p className={styles.help}>Copia esta ligação agora. Por segurança, não a poderás recuperar após sair desta página; poderás criar outra.</p><div className={styles.field}><label htmlFor={`private-${member.id}`}>Ligação privada de {member.name}</label><input id={`private-${member.id}`} readOnly value={links[member.id]} onFocus={event => event.target.select()} /></div><button type="button" className="button" onClick={() => copy(member.id)}>{copied === member.id ? "Ligação copiada!" : "Copiar ligação"}</button></div>}
         <button className={styles.textButton} type="button" disabled={Boolean(busy)} onClick={() => archive(member)}>Arquivar perfil</button>

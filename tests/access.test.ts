@@ -50,20 +50,20 @@ test("Admin sessions require the current credential and passwords verify with sa
 });
 
 test("Saved preferences survive reopening/backup and stale writes cannot overwrite newer changes", async () => {
-  const directory = mkdtempSync(join(tmpdir(), "amigo-store-test-"));
+  const directory = mkdtempSync(join(tmpdir(), "secret-santa-store-test-"));
   let store = openStore(join(directory, "family.sqlite"));
   try {
     assert.equal(store.seedSamples(), true);
     assert.equal(store.seedSamples(), false);
     const member = store.getMember("m-001")!;
-    const preferences = { introduction: "Novo texto", interests: [], likes: [], avoid: [], wishes: [{ title: "Um presente guardado", url: "https://example.com/" }], sizes: [], note: "" };
+    const preferences = { introduction: "Updated introduction", interests: [], likes: [], avoid: [], wishes: [{ title: "A saved gift", url: "https://example.com/" }], sizes: [], note: "" };
     assert.equal(store.savePreferences(member.id, member.version, preferences), "saved");
-    assert.equal(store.savePreferences(member.id, member.version, { ...preferences, introduction: "Alteração antiga" }), "conflict");
+    assert.equal(store.savePreferences(member.id, member.version, { ...preferences, introduction: "Stale change" }), "conflict");
     await store.sqlite.backup(join(directory, "backup.sqlite"));
     store.close();
     store = openStore(join(directory, "family.sqlite"));
-    assert.equal(store.getMember(member.id)?.introduction, "Novo texto");
-    assert.equal(store.getMember(member.id)?.wishes[0].title, "Um presente guardado");
+    assert.equal(store.getMember(member.id)?.introduction, preferences.introduction);
+    assert.equal(store.getMember(member.id)?.wishes[0].title, preferences.wishes[0].title);
     const backup = openStore(join(directory, "backup.sqlite"));
     try { assert.equal(backup.getMember(member.id)?.version, member.version + 1); } finally { backup.close(); }
     assert.equal((store.sqlite.prepare("SELECT COUNT(*) AS count FROM schema_migrations").get() as { count: number }).count, 2);

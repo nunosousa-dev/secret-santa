@@ -27,10 +27,10 @@ if (!paths.length) assert.ok(home.includes("A família está a chegar."), "Empty
 for (const path of paths) {
   const html = await get(path);
   assert.ok(html.includes("A minha lista de desejos"), `${path}: missing wishes section`);
-  assert.ok(html.includes('href="/#familia"'), `${path}: missing return navigation`);
+  assert.ok(html.includes('href="/#family"'), `${path}: missing return navigation`);
 }
-await get("/p/perfil-inexistente", 404);
-await get("/pagina-inexistente", 404);
+await get("/p/missing-profile", 404);
+await get("/missing-page", 404);
 const admin = await get("/admin");
 assert.ok(!admin.includes("Perfis e ligações privadas"), "Anonymous admin page must not expose the dashboard");
 console.log(`Passed: family page, ${paths.length} linked profiles, unknown routes, and protected admin entry.`);
