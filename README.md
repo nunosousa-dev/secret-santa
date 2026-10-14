@@ -12,7 +12,7 @@ The application includes a public family directory with name/interest search, in
 
 Protected administration at `/admin` supports member creation, renaming, archiving/restoration, avatar uploads, preferences, family settings and issuing/replacing/revoking private editing links. Administration stays locked until a password is configured. Printable avatar/name/QR cards are available at `/admin/cards`; the draw remains physical.
 
-The Docker image and Helm chart are prepared and locally verified for the homelab. The GitHub image workflow is configured; check its result before selecting a deployment tag. Live Argo CD integration and public access remain pending. See [deployment instructions](deploy/README.md).
+The Docker image and Helm chart are prepared and locally verified for the homelab. The Argo CD configuration starts with `amigo-secreto.local.nunosousa.dev` for local HTTPS testing; public settings remain available for later promotion. The GitHub image workflow is configured; check its result before selecting a deployment tag. Live deployment remains pending. See [deployment instructions](deploy/README.md).
 
 ## Run locally
 

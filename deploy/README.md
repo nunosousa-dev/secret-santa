@@ -1,6 +1,16 @@
 # Homelab deployment
 
-These files match the infrastructure inspected in the sibling `homelab` repository. That repository has not been modified and the application has not been deployed to the cluster.
+These files match the infrastructure inspected in the sibling `homelab` repository. The deployment is prepared in [homelab PR #10](https://github.com/nunosousa-dev/homelab/pull/10) for review and has not been applied to the cluster.
+
+## Local-first testing
+
+The Application initially loads `values.yaml` followed by `values-local.yaml`. The override uses `https://amigo-secreto.local.nunosousa.dev` and Gateway listener `websecure`, which serves the existing local wildcard certificate. The Deployment derives `APP_URL` from this hostname, so login, mutations, private editing links and printed QR codes work on the local origin.
+
+Resolve this hostname to the Traefik Gateway's LAN address using your existing local DNS or a temporary hosts entry on each test device. Use HTTPS. Phones must be on the home network or VPN. This stage needs neither a Cloudflare tunnel change nor a public DNS record.
+
+Preflight on 14 October 2026 confirmed that this hostname already resolves to the Gateway at `10.0.0.30`, and certificate `all-local-nunosousa-dev` is ready. No additional DNS record is needed on the existing local resolver.
+
+There is one application and one database. The local and public values select the active origin; this does not enable concurrent editing through both hostnames. Local QR cards are for testing. Print the family cards only after switching to the final public origin.
 
 ## Prepared configuration
 
@@ -38,6 +48,7 @@ With Helm installed, validate both configurations:
 ```sh
 helm lint deploy/helm/secret-santa --strict --set image.tag=test
 helm lint deploy/helm/secret-santa --strict --set image.tag=test --set backup.enabled=true
+helm lint deploy/helm/secret-santa --strict -f deploy/helm/secret-santa/values-local.yaml --set image.tag=test --set backup.enabled=true
 helm template secret-santa deploy/helm/secret-santa --namespace secret-santa --set image.tag=test --set backup.enabled=true
 ```
 
@@ -79,9 +90,10 @@ Prepare a reviewable change in the homelab:
 2. Set the published image/tag and confirm the hostname in `values.yaml`.
 3. Copy the validated SealedSecret to `kubernetes/apps/secret-santa/templates/admin-sealedsecret.yaml`.
 4. Copy `deploy/argocd/application.yaml` to `kubernetes/apps/secret-santa.yaml`, following the existing Application discovery mechanism.
-5. Add the hostname to `kubernetes/bootstrap/cloudflared/templates/config.yaml` before the final 404 rule, using service `http://traefik.traefik.svc.cluster.local:80`.
-6. Create the Cloudflare DNS record for the existing tunnel, following other public hostnames. Use the actual tunnel identifier.
-7. Review rendered manifests, then publish/sync through the normal GitOps workflow.
+5. Keep `values-local.yaml` in the Application's `helm.valueFiles` for the first deployment and configure local DNS as described above.
+6. Review rendered manifests, then publish/sync through the normal GitOps workflow. The existing bootstrap ApplicationSet does not discover this user Application: register `kubernetes/apps/secret-santa.yaml` explicitly after merging.
+
+After the local pilot, prepare public promotion: remove `values-local.yaml` from the Application's `helm.valueFiles`, add the public hostname to cloudflared with service `http://traefik.traefik.svc.cluster.local:80`, arrange a tunnel restart when its config changes, and create the proxied DNS record for the existing tunnel. The same release, Secret and PVCs are retained. Restart the app with the public `APP_URL`, issue fresh links using the public hostname and verify external HTTPS before printing final cards.
 
 The Application uses automated synchronisation. Publishing these files to the branch watched by Argo CD can start deployment. PVCs have Helm retention and `Prune=false` to prevent automatic deletion.
 

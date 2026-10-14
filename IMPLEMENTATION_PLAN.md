@@ -204,7 +204,8 @@ Avoid broad test scaffolding for decorative components. Prioritise permissions, 
 - Access implementation: interactive organiser setup/recovery, 12-hour admin sessions, 7-day member sessions, and reusable editing links with revocation are implemented. Review usability during the family pilot.
 - Content: family title, approximate member count, optional budget/date, avatar files.
 - Printing: review the implemented six-card A4 layout, then print and scan a sample on phones.
-- Exposure: confirm proposed `amigo-secreto.nunosousa.dev`, then add Cloudflare DNS/tunnel configuration. Choose the final origin before printing.
+- Exposure: public hostname `amigo-secreto.nunosousa.dev` is confirmed. Add Cloudflare DNS/tunnel configuration after the local pilot and before printing final cards.
+- Local-first rollout: the public hostname `amigo-secreto.nunosousa.dev` is confirmed. Initially load `values-local.yaml` for `amigo-secreto.local.nunosousa.dev` on the HTTPS Gateway listener. Validate on the LAN/VPN before preparing Cloudflare routing and public promotion. Preserve the same release and PVCs; print final cards after promotion.
 
 Messages/chat and annual event history remain future work. Preserve stable member IDs and straightforward migrations without building those features now.
 
