@@ -8,24 +8,25 @@
 .introduction { color: var(--muted); font-size: 15px; margin-top: 13px; line-height: 1.8; }
 .interests { display: flex; gap: 7px; flex-wrap: wrap; list-style: none; padding: 0; margin-top: 17px; }
 .interests li { background: #eaf0e4; color: #576a51; border-radius: 5px; padding: 6px 10px; font-size: 11px; }
-.introStar { position: absolute; right: 12px; top: 28px; color: #bc7a59; font-size: 49px; }
+.introStar { position: absolute; right: 12px; top: 28px; color: var(--gold); font-size: 49px; }
+.intro > span:first-child { outline: 1px solid #cbb078; outline-offset: 6px; margin: 7px; }
 .content { display: grid; gap: 25px; padding-top: 32px; }
 .content > * { min-width: 0; }
 .sectionHeading { display: flex; align-items: center; gap: 13px; }
 .sectionHeading .eyebrow { font-size: 9px; margin-bottom: 7px; }
 .sectionHeading h2 { font-size: 28px; letter-spacing: -.7px; }
-.sectionIcon { display: grid; place-items: center; background: #e9eee3; width: 42px; height: 46px; border-radius: 10px; flex-shrink: 0; }
+.sectionIcon { display: grid; place-items: center; background: var(--green); color: #f2d58e; width: 42px; height: 46px; border-radius: 10px; flex-shrink: 0; }
 .sectionDescription { margin-top: 14px; font-size: 13px; line-height: 1.8; color: var(--muted); }
 .wishList { list-style: none; padding: 0; margin-top: 23px; display: grid; gap: 13px; }
 .wishList > li { display: flex; gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 21px 17px; }
-.wishNumber { font: italic 21px var(--font-heading); color: #ab825e; padding-top: 1px; }
+.wishNumber { font: italic 21px var(--font-heading); color: var(--rust); padding-top: 1px; }
 .wishList h3 { font-size: 15px; line-height: 1.5; font-weight: 600; }
 .wishList p { font-size: 13px; line-height: 1.85; color: var(--muted); margin-top: 6px; }
 .shopLink { display: inline-flex; align-items: center; min-height: 44px; gap: 8px; margin-top: 5px; color: var(--green); font-size: 12px; text-decoration: underline; text-underline-offset: 4px; }
-.note { padding: 24px 20px; background: #f0ebdf; border-radius: 12px; margin-top: 23px; display: flex; align-items: flex-start; gap: 14px; color: var(--rust); }
+.note { padding: 24px 20px; background: #f3ead7; border: 1px solid #e4d3b1; border-radius: 12px; margin-top: 23px; display: flex; align-items: flex-start; gap: 14px; color: var(--rust); }
 .note h3 { font: 22px var(--font-heading); color: var(--ink); }
 .note p { font: italic 16px/1.8 var(--font-heading); color: #767462; margin-top: 9px; }
-.preferences { border: 1px solid var(--line); background: var(--surface); border-radius: 13px; padding: 6px 22px; align-self: start; }
+.preferences { border: 1px solid var(--line); border-top: 3px solid var(--rust); background: var(--surface); border-radius: 13px; padding: 6px 22px; align-self: start; }
 .preferences section { padding: 24px 0; }
 .preferences section + section { border-top: 1px solid var(--line); }
 .preferences h2 { font: 500 21px var(--font-heading); letter-spacing: -.4px; display: flex; align-items: center; gap: 10px; }

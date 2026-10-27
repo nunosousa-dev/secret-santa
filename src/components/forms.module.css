@@ -2,7 +2,7 @@
 .page h1 { font-size: clamp(34px, 7vw, 46px); line-height: 1.15; margin-bottom: 16px; }
 .lead { color: var(--muted); font-size: 14px; line-height: 1.8; margin-bottom: 25px; max-width: 620px; }
 .back { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-bottom: 20px; color: var(--muted); font-size: 13px; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px 18px; margin-block: 20px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--gold); border-radius: 12px; padding: 22px 18px; margin-block: 20px; box-shadow: 0 4px 20px #6d542b06; }
 .card h2 { font-size: 26px; margin-bottom: 20px; }
 .form { display: grid; gap: 20px; }
 .form fieldset { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: 22px; }

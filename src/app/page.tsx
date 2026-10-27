@@ -1,5 +1,6 @@
 import { FamilyDirectory } from "@/components/family-directory";
 import { Icon } from "@/components/icon";
+import { ChristmasTree } from "@/components/christmas-tree";
 import { formatBudget, formatExchangeDate } from "@/lib/sample-data";
 import { getStore } from "@/lib/db";
 import styles from "./page.module.css";
@@ -7,17 +8,13 @@ import styles from "./page.module.css";
 function ChristmasIllustration() {
   return (
     <div className={styles.illustration} aria-hidden="true">
-      <span className={styles.bigStar}>✳</span><span className={styles.smallStar}>✧</span><span className={styles.dot} />
-      <div className={styles.orbit} />
+      <ChristmasTree />
       <div className={styles.wishCard}>
-        <span className={styles.cardHole} />
-        <span className={styles.cardEyebrow}>PARA ALGUÉM ESPECIAL</span>
-        <span className={styles.cardTree}>✳</span>
+        <span className={styles.cardEyebrow}>ESTE NATAL</span>
         <span className={styles.cardTitle}>Feito de<br /><em>carinho.</em></span>
-        <span className={styles.cardLine} /><Icon name="heart" size={15} />
+        <Icon name="heart" size={13} />
       </div>
-      <div className={styles.gift}><span className={styles.giftRibbon} /><span className={styles.giftLid} /><span className={styles.bowLeft} /><span className={styles.bowRight} /></div>
-      <span className={styles.handwritten}>os melhores presentes<br />começam num detalhe <span>↗</span></span>
+      <span className={styles.handwritten}>a magia está nos pequenos detalhes</span>
     </div>
   );
 }
@@ -29,7 +26,7 @@ export default function Home() {
     <main id="content" className="container">
       <section className={styles.hero} aria-labelledby="welcome-title">
         <div className={styles.heroCopy}>
-          <p className="eyebrow">{family.name.toLocaleUpperCase("pt-PT")} · {family.year}</p>
+          <p className={`eyebrow ${styles.seasonBadge}`}><Icon name="star" size={13} />{family.name.toLocaleUpperCase("pt-PT")} · {family.year}</p>
           <h1 id="welcome-title">Pequenos desejos,<br />grandes <em>sorrisos.</em></h1>
           <p className={styles.welcome}>{family.welcome}</p>
           <a className="button" href="#family">Descobrir os desejos <Icon name="arrow" size={18} /></a>

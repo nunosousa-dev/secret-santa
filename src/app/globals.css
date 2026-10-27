@@ -1,17 +1,18 @@
 :root {
-  --background: #f9f7f0;
-  --surface: #fffefa;
-  --green: #294b3c;
-  --ink: #293e34;
-  --muted: #70766b;
-  --rust: #b56042;
-  --line: #e4e4d9;
+  --background: #faf6ed;
+  --surface: #fffdf7;
+  --green: #234f3e;
+  --ink: #263f34;
+  --muted: #687066;
+  --rust: #a53640;
+  --gold: #a17a37;
+  --line: #e5ddcc;
   --font-body: Arial, Helvetica, sans-serif;
   --font-heading: Georgia, "Times New Roman", serif;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--background); color: var(--ink); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: radial-gradient(ellipse at 90% 10%, #eeddbd45, transparent 45%), var(--background); color: var(--ink); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
 h1, h2, h3, p, ul { margin: 0; }
 h1, h2 { font-family: var(--font-heading); font-weight: 400; letter-spacing: -1.2px; }
 h2 { font-size: clamp(30px, 4vw, 38px); line-height: 1.15; }
@@ -24,9 +25,9 @@ svg { display: block; flex-shrink: 0; }
 :focus-visible { outline: 3px solid var(--green); outline-offset: 4px; }
 .container { width: 100%; max-width: 1160px; padding: 0 20px; margin-inline: auto; }
 .eyebrow { font: 650 10px var(--font-body); letter-spacing: 1.9px; color: var(--rust); margin-bottom: 13px; line-height: 1.6; }
-.button { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; padding: 13px 20px; border: 1px solid var(--green); border-radius: 7px; background: var(--green); color: #fffefa; font-size: 13px; font-weight: 550; cursor: pointer; transition: background .2s; }
-.button:hover { background: #1c3b2e; }
-.button-secondary { background: transparent; color: var(--green); }
+.button { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; padding: 13px 20px; border: 1px solid var(--rust); border-radius: 7px; background: var(--rust); color: #fffefa; font-size: 13px; font-weight: 550; cursor: pointer; transition: background .2s; }
+.button:hover { background: #852a33; }
+.button-secondary { background: transparent; border-color: var(--green); color: var(--green); }
 .button-secondary:hover { background: #eaf0e5; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .skip-link { position: fixed; top: 12px; left: 12px; z-index: 20; transform: translateY(-150%); background: var(--green); color: white; padding: 14px 18px; border-radius: 5px; }

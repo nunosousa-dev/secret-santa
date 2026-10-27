@@ -10,7 +10,10 @@ export function SiteHeader() {
           <span className={styles.brandIcon}><Icon name="gift" size={24} /></span>
           <span>amigo<span className={styles.brandSecond}>secreto</span></span>
         </Link>
-        <span className={styles.season}><span aria-hidden="true">✳</span> Natal em família</span>
+        <span className={styles.season}><Icon name="star" size={15} /> Natal em família</span>
+      </div>
+      <div className={styles.lights} aria-hidden="true">
+        {Array.from({ length: 18 }, (_, index) => <span key={index} />)}
       </div>
     </header>
   );
