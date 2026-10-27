@@ -8,5 +8,7 @@ coverage/
 .DS_Store
 playwright-report/
 test-results/
+# Visual-acceptance harness output (Playwright screenshots, not committed)
+__screenshots__/
 data/
 uploads/
