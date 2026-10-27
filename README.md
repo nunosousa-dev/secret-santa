@@ -133,4 +133,4 @@ Fonts and images are served locally. `noindex` is enabled; profiles remain publi
 
 - Lint, TypeScript and production builds are separate from visual acceptance.
 - Browser access to the local preview was denied during development. Interactive search, layouts and real iOS/Android use still need visual review.
-- The initial `npm audit --omit=dev` found no production dependency vulnerabilities. The full audit reported five high-severity entries in the development chain `eslint-config-next → fast-glob → micromatch → braces`, with no compatible fix available at that check. Revisit the advisory when updating dependencies.
+- The full `npm audit` reports no vulnerabilities in production or development dependencies as of the next 16.4.3 upgrade on 27 October 2026. The earlier `braces` development advisory (GHSA-vfj7-8cjw-p6xm / CVE-2026-93687) was withdrawn upstream on 23 October 2026 as not practically exploitable; `braces@3.0.3` remains in the development lint chain.
