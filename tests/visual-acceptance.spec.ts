@@ -1,4 +1,6 @@
+import { existsSync, readFileSync } from 'node:fs';
 import { test, expect, type Page } from '@playwright/test';
+import { STATE_FILE, type VisualPublicState } from '../scripts/visual-public-state';
 
 /**
  * Visual acceptance for PUBLIC screens only (no auth flows).
@@ -8,13 +10,21 @@ import { test, expect, type Page } from '@playwright/test';
  * Screenshot names carry the width, e.g. home-320.png.
  */
 
-const NUNO_UUID = '09ce5f5f-6c80-49e5-8a7e-e95f1aba7b98';
+function loadLongNameMemberId(): string {
+  if (!existsSync(STATE_FILE)) {
+    throw new Error(`Missing ${STATE_FILE} — the webServer (scripts/visual-public-stack.ts) did not run yet.`);
+  }
+  const state: VisualPublicState = JSON.parse(readFileSync(STATE_FILE, 'utf8'));
+  return state.longNameMemberId;
+}
 
-const SCREENS: Array<{ name: string; path: string; expectStatus: number }> = [
+// A static path, or a function resolved at test-run time once the webServer's
+// synthetic database (and the member ids it created) are ready.
+const SCREENS: Array<{ name: string; path: string | (() => string); expectStatus: number }> = [
   { name: 'home', path: '/', expectStatus: 200 },
   { name: 'profile-sample', path: '/p/m-001', expectStatus: 200 },
   { name: 'profile-empty-list', path: '/p/m-006', expectStatus: 200 },
-  { name: 'profile-long-name', path: `/p/${NUNO_UUID}`, expectStatus: 200 },
+  { name: 'profile-long-name', path: () => `/p/${loadLongNameMemberId()}`, expectStatus: 200 },
   { name: 'not-found-profile', path: '/p/missing-profile', expectStatus: 404 },
   { name: 'edit-rewrite', path: '/editar/m-001', expectStatus: 200 },
   { name: 'not-found-route', path: '/nao-existe-xyz', expectStatus: 404 },
@@ -32,8 +42,9 @@ test.describe('visual acceptance — public screens', () => {
         return;
       }
 
-      const response = await page.goto(screen.path, { waitUntil: 'networkidle' });
-      expect(response?.status(), `HTTP status for ${screen.path}`).toBe(screen.expectStatus);
+      const path = typeof screen.path === 'function' ? screen.path() : screen.path;
+      const response = await page.goto(path, { waitUntil: 'networkidle' });
+      expect(response?.status(), `HTTP status for ${path}`).toBe(screen.expectStatus);
 
       // Stable render: let fonts settle before capture.
       await page.evaluate(() => document.fonts.ready);
@@ -65,7 +76,7 @@ test.describe('visual acceptance — public screens', () => {
             const cw = await page.evaluate(() => document.documentElement.clientWidth);
             return sw <= cw;
           },
-          { message: `horizontal overflow at ${width}px on ${screen.path}: ${overflowing.join(', ')}` }
+          { message: `horizontal overflow at ${width}px on ${path}: ${overflowing.join(', ')}` }
         )
         .toBe(true)
         .catch((err) => {
