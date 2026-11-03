@@ -11,5 +11,7 @@ test-results/
 test-results-admin/
 # Visual-acceptance harness output (Playwright screenshots, not committed)
 __screenshots__/
+# Impeccable local overrides
+.impeccable/config.local.json
 data/
 uploads/

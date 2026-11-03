@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-27T22:55:00Z",
+  "title": "Design System: Amigo Secreto",
+  "extensions": {
+    "colorMeta": {
+      "paper": { "role": "neutral", "displayName": "Warm Paper", "canonical": "#faf6ed", "tonalRamp": ["#3a382f", "#57533f", "#766e4e", "#988d64", "#bcad7e", "#ddcda0", "#eee3bf", "#faf6ed"] },
+      "surface": { "role": "neutral", "displayName": "Ivory Surface", "canonical": "#fffdf7", "tonalRamp": ["#43413a", "#636153", "#84816d", "#a6a289", "#c6c2a8", "#e2decb", "#f4f1e2", "#fffdf7"] },
+      "pine": { "role": "primary", "displayName": "Pine Green", "canonical": "#234f3e", "tonalRamp": ["#0e2019", "#163227", "#1d4133", "#234f3e", "#2f6a52", "#40846a", "#7aa996", "#c2d8cd"] },
+      "pine-deep": { "role": "primary", "displayName": "Deep Pine", "canonical": "#193e30", "tonalRamp": ["#0a1a14", "#102a20", "#153728", "#193e30", "#245644", "#38705a", "#719a89", "#b8ccc3"] },
+      "ink": { "role": "neutral", "displayName": "Pine Ink", "canonical": "#263f34", "tonalRamp": ["#101a15", "#1a2b23", "#263f34", "#335446", "#4a6a5b", "#71897d", "#a3b3aa", "#d5ddd7"] },
+      "holly": { "role": "secondary", "displayName": "Holly Red / Rust", "canonical": "#a53640", "tonalRamp": ["#3f1217", "#5f1d25", "#822933", "#a53640", "#c04a55", "#d0737c", "#e5acb2", "#f4dadc"] },
+      "holly-deep": { "role": "secondary", "displayName": "Holly Deep", "canonical": "#852a33", "tonalRamp": ["#330e12", "#4e171e", "#692029", "#852a33", "#a03a45", "#bc6670", "#d99ba2", "#efccd0"] },
+      "gold": { "role": "tertiary", "displayName": "Antique Gold", "canonical": "#a17a37", "tonalRamp": ["#3d2e13", "#5e471f", "#7f612b", "#a17a37", "#bd9450", "#d1b077", "#e3cda3", "#f1e6cd"] },
+      "gold-bright": { "role": "tertiary", "displayName": "Candle Gold", "canonical": "#e5c485", "tonalRamp": ["#544321", "#7d6231", "#a58342", "#c8a260", "#e5c485", "#eed6a8", "#f4e5c9", "#fbf3e2"] },
+      "parchment": { "role": "tertiary", "displayName": "Parchment", "canonical": "#f3ead7", "tonalRamp": ["#574c30", "#82724a", "#ad9a6b", "#d4c294", "#e7d8b3", "#f3ead7", "#f8f2e6", "#fcf8f0"] },
+      "muted": { "role": "neutral", "displayName": "Sage Muted", "canonical": "#687066", "tonalRamp": ["#262925", "#3b403a", "#51574f", "#687066", "#838b81", "#a3aa9f", "#c5cac1", "#e5e8e2"] },
+      "line": { "role": "neutral", "displayName": "Linen Line", "canonical": "#e5ddcc", "tonalRamp": ["#524c3f", "#7a7261", "#a39a85", "#c8c0aa", "#e5ddcc", "#eee8db", "#f5f1e8", "#fbf9f4"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero H1 and profile-name H1 only; one per screen, Georgia 400 with tight tracking." },
+      "headline": { "displayName": "Headline", "purpose": "Section H2s in Georgia; 25-29px inside pine banners." },
+      "title": { "displayName": "Title", "purpose": "Member names on cards, wish items, small section headings (Georgia 500)." },
+      "body": { "displayName": "Body", "purpose": "All reading text and controls in Arial; inputs 16px on phones (iOS zoom guard), 13px at desktop." },
+      "label": { "displayName": "Eyebrow Label", "purpose": "10-11px Arial 650 with 1.9px tracking in holly-red; bright gold on pine." }
+    },
+    "shadows": [
+      { "name": "card-ambient", "value": "0 3px 12px #6d542b06", "purpose": "Resting member/form cards: a brown-tinted whisper, almost invisible." },
+      { "name": "card-ambient-form", "value": "0 4px 20px #6d542b06", "purpose": "Resting form/admin cards." },
+      { "name": "card-lift", "value": "0 9px 24px #233e3010 + translateY(-4px), 0.2s ease", "purpose": "Member-card hover; border simultaneously warms to #b99a62." },
+      { "name": "paper-cut", "value": "3px 5px 0 #e5d8bb80", "purpose": "Hero taped wish card: hard offset shadow with no blur — the one deliberately physical projection." },
+      { "name": "bulb-glow", "value": "0 0 9px 2px currentColor at 25% alpha", "purpose": "Header string lights glow (gold/red/sage bulbs)." }
+    ],
+    "motion": [
+      { "name": "ease-default", "value": "ease", "purpose": "All transitions use plain CSS ease; only background, transform, border-color and box-shadow animate." },
+      { "name": "duration-fast", "value": "0.2s", "purpose": "Button hover (background), card hover (transform/border/shadow)." },
+      { "name": "reduced-motion", "value": "global kill switch", "purpose": "prefers-reduced-motion disables all transitions/animations and smooth scrolling site-wide." }
+    ],
+    "breakpoints": [
+      { "name": "xs", "value": "360px", "purpose": "Directory grid goes 2-up." },
+      { "name": "md", "value": "720px", "purpose": "Primary switch: hero 2-col, directory 3-up, header 82→98px, profile gains sidebar." },
+      { "name": "lg", "value": "1000px", "purpose": "Profile gutter 65px, sidebar 325px, exchange-ending reveals." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single holly-red action on a screen. Copy in Arial 13px/550, never serif.",
+      "html": "<button class=\"ds-btn-primary\">Guardar alterações</button>",
+      "css": ".ds-btn-primary { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; padding: 13px 20px; border: 1px solid #a53640; border-radius: 7px; background: #a53640; color: #fffefa; font: 550 13px Arial, Helvetica, sans-serif; cursor: pointer; transition: background .2s ease; } .ds-btn-primary:hover { background: #852a33; } .ds-btn-primary:focus-visible { outline: 3px solid #234f3e; outline-offset: 4px; } .ds-btn-primary:disabled { opacity: .6; cursor: wait; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Pine-outlined ghost on paper; sage wash on hover.",
+      "html": "<button class=\"ds-btn-secondary\">Procurar</button>",
+      "css": ".ds-btn-secondary { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; padding: 13px 20px; border: 1px solid #234f3e; border-radius: 7px; background: transparent; color: #234f3e; font: 550 13px Arial, Helvetica, sans-serif; cursor: pointer; transition: background .2s ease; } .ds-btn-secondary:hover { background: #eaf0e5; } .ds-btn-secondary:focus-visible { outline: 3px solid #234f3e; outline-offset: 4px; }"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Directory search: surface fill, leading icon pad, pine outline on focus (not glow).",
+      "html": "<label class=\"ds-search\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m20 20-3.8-3.8\"/></svg><input type=\"search\" placeholder=\"Procurar por nome ou gosto…\"></label>",
+      "css": ".ds-search { display: flex; align-items: center; gap: 10px; border: 1px solid #e5ddcc; border-radius: 9px; padding-left: 14px; color: #687066; background: #fffdf7; min-height: 48px; } .ds-search:focus-within { outline: 2px solid #234f3e; outline-offset: 3px; } .ds-search input { border: 0; width: 100%; min-width: 0; padding: 14px 10px; background: transparent; font: 400 16px/1.5 Arial, Helvetica, sans-serif; color: #263f34; outline: none; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Form field: near-white fill, 1px sage line, 7px radius, 48px min-height, 16px font on phones.",
+      "html": "<div class=\"ds-field\"><label for=\"ds-name\">Nome</label><input id=\"ds-name\" type=\"text\" value=\"Inês\"><span class=\"ds-help\">Como aparece no cartão impresso.</span></div>",
+      "css": ".ds-field { display: grid; gap: 8px; } .ds-field label { font: 600 14px/1.5 Arial, Helvetica, sans-serif; color: #263f34; } .ds-field input { width: 100%; min-height: 48px; padding: 12px; border: 1px solid #cfd4c7; border-radius: 7px; color: #263f34; background: #fffefa; font: 400 16px/1.5 Arial, Helvetica, sans-serif; } .ds-field input:focus-visible { outline: 3px solid #234f3e; outline-offset: 4px; } .ds-help { font: 400 12px/1.7 Arial, Helvetica, sans-serif; color: #687066; }"
+    },
+    {
+      "name": "Member Card",
+      "kind": "card",
+      "refersTo": "card-member",
+      "description": "Directory card: ribbon top-edge (green/rust alternating), medallion portrait with star pin, Georgia name, chips, holly card-link footer.",
+      "html": "<article class=\"ds-card\"><span class=\"ds-portrait\"><span class=\"ds-avatar\">T</span></span><span class=\"ds-star\" aria-hidden=\"true\">★</span><h3 class=\"ds-name\">Tomás</h3><p class=\"ds-intro\">Adora puzzles, Lego e tudo o que voa.</p><div class=\"ds-tags\"><span>Lego</span><span>Astronomia</span></div><a class=\"ds-cardlink\" href=\"#\">Ver perfil →</a></article>",
+      "css": ".ds-card { position: relative; width: 260px; background: #fffdf7; border: 1px solid #e5ddcc; border-top: 3px solid #234f3e; border-radius: 14px; padding: 28px 16px 0; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 3px 12px #6d542b06; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; } .ds-card:hover { transform: translateY(-4px); border-color: #b99a62; box-shadow: 0 9px 24px #233e3010; } .ds-card:nth-of-type(even) { border-top-color: #a53640; } .ds-portrait { border: 1px solid #cbb078; padding: 5px; border-radius: 50%; margin-bottom: 17px; } .ds-avatar { display: grid; place-items: center; width: 100px; height: 100px; border-radius: 50%; background: #dce3d1; color: #234f3e; font: 400 34px Georgia, serif; } .ds-star { position: absolute; top: 14px; right: 20px; font-size: 25px; line-height: 1; color: #a53640; background: #fffdf7; border-radius: 50%; } .ds-name { font: 500 27px/1.1 Georgia, \"Times New Roman\", serif; margin: 0 0 8px; color: #263f34; } .ds-intro { color: #687066; font: 400 12px/1.7 Arial, Helvetica, sans-serif; max-width: 205px; min-height: 42px; margin: 0 0 15px; } .ds-tags { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin: 0 0 23px; } .ds-tags span { font: 400 10px/1.2 Arial, Helvetica, sans-serif; color: #626b60; background: #f3eee2; border-radius: 3px; padding: 5px 8px; } .ds-cardlink { margin-top: auto; border-top: 1px solid #e5ddcc; width: 100%; min-height: 49px; display: flex; align-items: center; justify-content: center; gap: 12px; font: 650 12px Arial, Helvetica, sans-serif; color: #a53640; text-decoration: none; }"
+    },
+    {
+      "name": "Interest Chip",
+      "kind": "chip",
+      "refersTo": "chip-tag",
+      "description": "Micro tag on parchment; profile variant uses sage wash. No borders, no interactivity.",
+      "html": "<div class=\"ds-chips\"><span>Lego</span><span>Astronomia</span><span>Xadrez</span></div>",
+      "css": ".ds-chips { display: flex; flex-wrap: wrap; gap: 5px; } .ds-chips span { font: 400 10px/1.2 Arial, Helvetica, sans-serif; color: #626b60; background: #f3eee2; border-radius: 3px; padding: 5px 8px; }"
+    },
+    {
+      "name": "Site Header (Pine Band)",
+      "kind": "nav",
+      "refersTo": "section-icon",
+      "description": "The one loud surface: pine band, two-line ivory wordmark, gold icon, hanging string lights.",
+      "html": "<header class=\"ds-header\"><div class=\"ds-header-inner\"><a class=\"ds-brand\"><span class=\"ds-brand-icon\">✦</span><span>Amigo<b>Secreto</b></span></a><span class=\"ds-season\">Amigo Secreto · Natal 2026</span></div><div class=\"ds-lights\" aria-hidden=\"true\"><i></i><i class=\"r\"></i><i class=\"g\"></i><i></i><i class=\"r\"></i><i class=\"g\"></i><i></i><i class=\"r\"></i></div></header>",
+      "css": ".ds-header { position: relative; background: #234f3e; border-bottom: 1px solid #193e30; padding-bottom: 12px; } .ds-header-inner { max-width: 1120px; margin: auto; min-height: 82px; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; } .ds-brand { display: inline-flex; align-items: center; gap: 10px; color: #fff8e8; font: 750 19px/.94 Arial, Helvetica, sans-serif; letter-spacing: -.7px; text-decoration: none; } .ds-brand b { font-weight: 450; display: block; } .ds-brand-icon { color: #e5c485; font-size: 22px; } .ds-season { font: 400 11px Arial, Helvetica, sans-serif; color: #fff8e8; } .ds-lights { position: absolute; bottom: 5px; left: 0; right: 0; height: 14px; display: flex; justify-content: space-around; border-top: 1px solid #a5b59a65; pointer-events: none; } .ds-lights i { width: 6px; height: 9px; margin-top: 4px; border-radius: 40% 40% 50% 50%; background: #efcf88; box-shadow: 0 0 9px 2px #efcf8840; } .ds-lights .r { background: #d98379; box-shadow: 0 0 9px 2px #d9837930; transform: rotate(12deg); } .ds-lights .g { background: #d9e4c3; box-shadow: 0 0 9px 2px #d9e4c330; transform: rotate(-12deg); }"
+    },
+    {
+      "name": "Parchment Note (Com Carinho)",
+      "kind": "card",
+      "refersTo": "button-primary",
+      "description": "Warm human-voice panel: parchment fill, serif heading, Georgia italic body.",
+      "html": "<aside class=\"ds-note\"><span class=\"ds-note-icon\">❤</span><div><h3>Nota para o teu amigo</h3><p>Espero que este Natal seja tão bonito como a lista dele.</p></div></aside>",
+      "css": ".ds-note { padding: 24px 20px; background: #f3ead7; border: 1px solid #e4d3b1; border-radius: 12px; display: flex; align-items: flex-start; gap: 14px; color: #a53640; max-width: 480px; } .ds-note-icon { font-size: 16px; margin-top: 5px; } .ds-note h3 { font: 400 22px Georgia, \"Times New Roman\", serif; color: #263f34; margin: 0 0 9px; } .ds-note p { font: italic 400 16px/1.8 Georgia, serif; color: #767462; margin: 0; }"
+    },
+    {
+      "name": "Section Icon Tile + Heading",
+      "kind": "custom",
+      "refersTo": "section-icon",
+      "description": "Pine tile with candle-gold icon leading every profile section, next to a gold eyebrow and Georgia H2.",
+      "html": "<div class=\"ds-sechead\"><span class=\"ds-tile\">♥</span><div><p class=\"ds-eyebrow\">Desejos de Natal</p><h2>O que gostava de receber</h2></div></div>",
+      "css": ".ds-sechead { display: flex; align-items: center; gap: 13px; } .ds-tile { display: grid; place-items: center; background: #234f3e; color: #f2d58e; width: 42px; height: 46px; border-radius: 9px; font-size: 18px; } .ds-eyebrow { font: 650 9px/1.6 Arial, Helvetica, sans-serif; letter-spacing: 1.9px; color: #a53640; margin: 0 0 7px; } .ds-sechead h2 { font: 400 28px/1.15 Georgia, \"Times New Roman\", serif; letter-spacing: -.7px; color: #263f34; margin: 0; }"
+    },
+    {
+      "name": "Empty State (Dashed)",
+      "kind": "custom",
+      "refersTo": "card-member",
+      "description": "Dashed linen border means 'empty or physical'. Green serif heading, muted copy, secondary action.",
+      "html": "<div class=\"ds-empty\"><span class=\"ds-empty-icon\">✦</span><h3>Sem resultados</h3><p>Ninguém corresponde à tua pesquisa. Experimenta outro nome.</p><button class=\"ds-empty-btn\">Mostrar a família toda</button></div>",
+      "css": ".ds-empty { text-align: center; padding: 42px 18px; border: 1px dashed #e5ddcc; border-radius: 14px; color: #687066; background: transparent; font: 400 14px/1.7 Arial, Helvetica, sans-serif; } .ds-empty-icon { display: block; margin: 0 auto 14px; color: #a53640; font-size: 20px; } .ds-empty h3 { font: 400 24px Georgia, serif; color: #234f3e; margin: 0 0 8px; } .ds-empty p { margin: 0 0 20px; } .ds-empty-btn { min-height: 48px; padding: 13px 20px; border: 1px solid #234f3e; border-radius: 7px; background: transparent; color: #234f3e; font: 550 13px Arial, Helvetica, sans-serif; cursor: pointer; transition: background .2s ease; } .ds-empty-btn:hover { background: #eaf0e5; }"
+    },
+    {
+      "name": "Printable Draw Card",
+      "kind": "custom",
+      "refersTo": "card-member",
+      "description": "88×84mm quartered keepsake: avatar, name, 30mm QR; dashed cut/fold guides; internals scale in container-query units.",
+      "html": "<div class=\"ds-printcard\"><div class=\"ds-q\"><span class=\"ds-pavatar\">IN</span></div><div class=\"ds-q\"><h2 class=\"ds-pname\">Inês</h2></div><div class=\"ds-q\"></div><div class=\"ds-q\"><div class=\"ds-qr\" aria-hidden=\"true\">▣</div></div></div>",
+      "css": ".ds-printcard { position: relative; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; aspect-ratio: 88/84; width: 300px; container-type: inline-size; border: 1px dashed #b7c2b1; background: #fffefa; text-align: center; } .ds-printcard::before { content: \"\"; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px dashed #b7c2b1; } .ds-printcard::after { content: \"\"; position: absolute; top: 50%; left: 0; right: 0; border-top: 1px dashed #b7c2b1; } .ds-q { display: flex; justify-content: center; align-items: center; min-width: 0; min-height: 0; } .ds-pavatar { display: grid; place-items: center; width: 27%; aspect-ratio: 1; border-radius: 50%; background: #f1d9c7; color: #234f3e; font: 400 6cqw Georgia, serif; } .ds-pname { font: 400 6.4cqw/1.1 Georgia, serif; color: #263f34; margin: 0; } .ds-qr { width: 34%; aspect-ratio: 1; background: #fff; color: #263f34; display: grid; place-items: center; font-size: 5cqw; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Parlour Wish Book",
+    "overview": "The interface behaves like a family's handwritten gift list pinned up in the parlour for the season: warm cream paper, pine-green bunting, terracotta-red ribbon used sparingly, and antique gold reserved for keepsake moments (stars, garland lights, the tree topper). Nothing is glossy or app-shop generic — ornament is hand-crafted signal, not decoration noise. The system is phone-first by construction: layouts are single-column at 320 px, all interactive targets are at least 44–48 px, and desktop is treated as the organically-grown wide version of the same sheet, never a separate design. The palette follows the confirmed mood: pine green leads, holly-red accents sparingly, antique gold only for keepsake moments, all on warm cream paper. Components feel tactile and restrained: gentle lift on hover, dashed edges to signal empty or physical states, italic serif reserved for personal, human notes.",
+    "keyCharacteristics": [
+      "Warm cream paper ground with a single soft radial light in the top-right corner",
+      "Pine-green chrome (header, explainer banner) with cream-ivory text (#fff8e8) and gold icons",
+      "Holly-red as the one action accent — buttons, wish numbers, star pin, eyebrow labels",
+      "Georgia serif for anything spoken about a person; Arial for anything the person uses",
+      "Hand-made signals: taped wish card, ribbon-framed portrait medallions, dashed empty states, folded print cards",
+      "44–48 px touch targets everywhere; 16 px inputs on phones to prevent iOS zoom"
+    ],
+    "rules": [
+      { "name": "The One Red Voice Rule", "body": "Holly-red is the only action color. If two elements on one screen both scream in red, one of them is wrong; gold and green never carry calls to action.", "section": "colors" },
+      { "name": "The Keepsake Gold Rule", "body": "Gold appears only where the system remembers, not where it asks: stars, ornament lights, framing accents, the tree topper. No gold buttons.", "section": "colors" },
+      { "name": "The No-Pure-Black Rule", "body": "Text, lines and shadows are green- or brown-tinted. Pure #000 does not exist in this palette; #fffefa is the whitest white.", "section": "colors" },
+      { "name": "The Spoken-vs-Used Rule", "body": "Serif for what is said about a person (names, headlines, personal notes); sans for what the person operates (buttons, labels, inputs, help). A serif button label is a bug.", "section": "typography" },
+      { "name": "The Italic-is-Human Rule", "body": "Georgia italic marks a human voice: the em-accent in the hero, wish-card titles, the closing \"Com carinho\" note. Never for emphasis in UI copy.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces rest flat; a shadow appears only for hover/lift or to make the hero's paper cutout look cut out. No stacked, diffuse shadow layers.", "section": "elevation" },
+      { "name": "The Tonal-Layering Rule", "body": "When something must separate, move one step paper → surface → parchment/sage tint before adding shadow or border weight.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep every interactive target ≥ 44 px (buttons 48 px) at 320 px width, and inputs at 16 px font on phones.",
+      "Do use holly-red for exactly one action per screen; keep gold for ornament and keepsake moments only.",
+      "Do separate surfaces with the tonal ladder (paper → surface → parchment/sage tint) and 1 px #e5ddcc borders before reaching for shadows.",
+      "Do alternate the 3 px ribbon top-border by its context rule (green/rust members, gold forms).",
+      "Do use dashed 1 px borders to mean \"empty or physical\" — empty states and fold guides, nothing else.",
+      "Do use Georgia italic for the human voice (notes, card titles) and keep all UI controls in Arial.",
+      "Do keep ornament inline-SVG, local, aria-hidden, and flat-illustrated; preserve prefers-reduced-motion compliance and the skip-link/focus-outline baseline.",
+      "Do print via the same cqw-based card internals so screen preview equals paper output."
+    ],
+    "donts": [
+      "Don't introduce blue/purple/teal as interface colors, gradients on text/buttons, or glassmorphism — the world is pine/cream/gold flat paper.",
+      "Don't use webfonts, icon fonts, or CDN assets; only locally-served system stacks and inline SVG.",
+      "Don't use emoji as interface icons (they may appear only inside member-written wish text).",
+      "Don't add pure black text or pure white backgrounds; use #263f34 on #faf6ed/#fffdf7.",
+      "Don't make anything pill-shaped except avatars, the member-count badge and the light bulbs; the radius ceiling is 14 px.",
+      "Don't shadow-stack: one ambient shadow per surface, max.",
+      "Don't put English in family-facing UI, or Portuguese in code/routes/dev output (AGENTS.md language rule).",
+      "Don't replace factual profile content or printed card data with marketing claims; the QR always resolves to /p/<stable-id>."
+    ]
+  }
+}

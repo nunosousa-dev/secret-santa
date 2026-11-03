@@ -12,14 +12,15 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const family = getStore().getFamily();
   return (
-    <html lang="pt-PT" data-scroll-behavior="smooth">
+    <html lang="pt-PT">
       <body>
         <a href="#content" className="skip-link" data-print-hidden>Saltar para o conteúdo</a>
         <SiteHeader />
         {children}
-        {getStore().getFamily().demo && <SampleNotice />}
-        <SiteFooter year={getStore().getFamily().year} />
+        {family.demo && <SampleNotice />}
+        <SiteFooter />
       </body>
     </html>
   );

@@ -4,16 +4,16 @@
 .intro { margin-top: 20px; padding-bottom: 32px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; align-items: flex-start; gap: 24px; position: relative; }
 .intro h1 { font-size: clamp(37px, 8vw, 52px); line-height: 1.15; }
 .intro h1 > span { color: var(--rust); }
-.intro .eyebrow { font-size: 9px; }
+.intro .eyebrow { font-size: 11px; }
 .introduction { color: var(--muted); font-size: 15px; margin-top: 13px; line-height: 1.8; }
 .interests { display: flex; gap: 7px; flex-wrap: wrap; list-style: none; padding: 0; margin-top: 17px; }
-.interests li { background: #eaf0e4; color: #576a51; border-radius: 5px; padding: 6px 10px; font-size: 11px; }
+.interests li { background: #eaf0e4; color: #576a51; border-radius: 5px; padding: 6px 10px; font-size: 12px; }
 .introStar { position: absolute; right: 12px; top: 28px; color: var(--gold); font-size: 49px; }
 .intro > span:first-child { outline: 1px solid #cbb078; outline-offset: 6px; margin: 7px; }
 .content { display: grid; gap: 25px; padding-top: 32px; }
 .content > * { min-width: 0; }
 .sectionHeading { display: flex; align-items: center; gap: 13px; }
-.sectionHeading .eyebrow { font-size: 9px; margin-bottom: 7px; }
+.sectionHeading .eyebrow { font-size: 11px; margin-bottom: 7px; }
 .sectionHeading h2 { font-size: 28px; letter-spacing: -.7px; }
 .sectionIcon { display: grid; place-items: center; background: var(--green); color: #f2d58e; width: 42px; height: 46px; border-radius: 10px; flex-shrink: 0; }
 .sectionDescription { margin-top: 14px; font-size: 13px; line-height: 1.8; color: var(--muted); }
@@ -25,7 +25,7 @@
 .shopLink { display: inline-flex; align-items: center; min-height: 44px; gap: 8px; margin-top: 5px; color: var(--green); font-size: 12px; text-decoration: underline; text-underline-offset: 4px; }
 .note { padding: 24px 20px; background: #f3ead7; border: 1px solid #e4d3b1; border-radius: 12px; margin-top: 23px; display: flex; align-items: flex-start; gap: 14px; color: var(--rust); }
 .note h3 { font: 22px var(--font-heading); color: var(--ink); }
-.note p { font: italic 16px/1.8 var(--font-heading); color: #767462; margin-top: 9px; }
+.note p { font: italic 16px/1.8 var(--font-heading); color: #5d5c4c; margin-top: 9px; }
 .preferences { border: 1px solid var(--line); border-top: 3px solid var(--rust); background: var(--surface); border-radius: 13px; padding: 6px 22px; align-self: start; }
 .preferences section { padding: 24px 0; }
 .preferences section + section { border-top: 1px solid var(--line); }
@@ -35,7 +35,7 @@
 .preferences li { font-size: 13px; line-height: 1.6; color: var(--muted); display: flex; gap: 9px; align-items: flex-start; }
 .preferences li svg { color: #6f8566; margin-top: 2px; }
 .preferences dl { margin: 17px 0 0; display: grid; gap: 15px; }
-.preferences dt { font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+.preferences dt { font-size: 12px; color: var(--muted); margin-bottom: 5px; }
 .preferences dd { margin: 0; font-size: 13px; line-height: 1.6; }
 .empty { padding: 35px 24px; margin-top: 24px; border: 1px dashed #c8d1bf; border-radius: 12px; background: #f0f2e9; }
 .empty svg { color: #839774; margin-bottom: 15px; }

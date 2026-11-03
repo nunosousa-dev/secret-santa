@@ -19,8 +19,8 @@ export function SiteHeader() {
   );
 }
 
-export function SiteFooter({ year }: { year: number }) {
-  return <footer className={styles.footer} data-print-hidden><Icon name="heart" size={15} /><span>O melhor do Natal é partilhá-lo.</span><span className={styles.footerYear}>{year}</span></footer>;
+export function SiteFooter() {
+  return <footer className={styles.footer} data-print-hidden><Icon name="heart" size={15} /><span>O melhor do Natal é partilhá-lo.</span><span className={styles.footerYear}>{new Date().getFullYear()}</span></footer>;
 }
 
 export function SampleNotice() {
