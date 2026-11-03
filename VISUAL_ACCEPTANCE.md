@@ -2,7 +2,7 @@
 
 Playwright drives headless Chromium at three mobile widths — 320, 390 and 430 CSS
 pixels (`playwright.config.ts` / `playwright.admin.config.ts` projects `width-320`,
-`width-390`, `width-430`) — to catch layout regressions before a manual device pass
+`width-390`, `width-430`) — plus 1280 px desktop for public screens — to catch layout regressions before a manual device pass
 (see `DEVICE_VERIFICATION.md` for what still needs a real phone/printer).
 
 Every test takes a full-page screenshot into `__screenshots__/<name>-<width>.png`
@@ -26,6 +26,11 @@ in any fresh clone, worktree or CI run.
 Covers: home (`/`), a full sample profile, an empty-wishlist profile, the
 long-name/initials-avatar profile, both 404 variants (`/p/missing-profile` and an
 unknown route), and one Portuguese-URL rewrite sanity check (`/editar/<id>`).
+
+Directory interaction tests cover accent-insensitive searches with surrounding
+whitespace, result feedback when every profile matches, whitespace-only queries,
+empty-result recovery, focus after clearing, Escape-to-clear, and returning from a
+profile to the family heading. These run at all four public viewport widths.
 
 ## Authenticated screens — `tests/visual-acceptance-admin.spec.ts`
 

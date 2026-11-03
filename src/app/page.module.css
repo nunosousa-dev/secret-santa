@@ -1,42 +1,44 @@
 .hero { padding-block: 38px 26px; display: grid; gap: 0; overflow: hidden; }
 .heroCopy { position: relative; z-index: 1; }
-.seasonBadge { display: inline-flex; align-items: center; gap: 8px; padding: 7px 11px; border: 1px solid #dfcfae; border-radius: 5px; background: #f3ead7; color: #785b29; max-width: 100%; overflow-wrap: anywhere; }
-.hero h1 { font-size: clamp(38px, 8.5vw, 62px); line-height: 1.12; letter-spacing: -1.8px; }
+.seasonBadge { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; padding: 7px 11px; border: 1px solid #dfcfae; border-radius: 5px; background: #f3ead7; color: #785b29; font-size: 12px; line-height: 1.5; max-width: 100%; overflow-wrap: anywhere; }
+.hero h1 { font-size: clamp(36px, 9.5vw, 62px); line-height: 1.12; letter-spacing: -.03em; text-wrap: balance; }
 .hero h1 em { font-weight: 400; color: var(--rust); }
 .welcome { max-width: 395px; font-size: 15px; line-height: 1.8; color: var(--muted); margin: 20px 0 24px; }
-.heroNote { font-size: 10px; color: var(--muted); margin-top: 18px; display: flex; align-items: center; gap: 7px; }
+.heroNote { font-size: 12px; color: var(--muted); margin-top: 18px; display: flex; align-items: center; gap: 7px; }
 .heroNote svg { color: var(--rust); }
 .illustration { position: relative; width: min(100%, 440px); justify-self: center; margin-top: 8px; padding-bottom: 22px; }
 .illustration > svg { width: 100%; height: auto; }
-.wishCard { position: absolute; right: 0; top: 23%; width: 103px; padding: 15px 8px 12px; border: 1px solid #d4bc8d; border-radius: 3px; background: #fffbf1; transform: rotate(9deg); display: flex; flex-direction: column; align-items: center; gap: 9px; box-shadow: 3px 5px 0 #e5d8bb80; }
+.wishCard { position: absolute; right: 0; top: 23%; width: 103px; padding: 15px 8px 12px; border: 1px solid #d4bc8d; border-radius: 3px; background: #fffbf1; transform: rotate(9deg); display: flex; flex-direction: column; align-items: center; gap: 9px; box-shadow: 2px 4px 8px #6d542b14; }
 .wishCard::before { content: ''; position: absolute; width: 24px; height: 12px; top: -7px; background: #d9be8790; transform: rotate(-9deg); }
-.cardEyebrow { font-size: 7px; letter-spacing: 1.4px; font-weight: 600; color: var(--rust); }
+.cardEyebrow { font-size: 9px; letter-spacing: 1.4px; font-weight: 600; color: var(--rust); }
 .cardTitle { font: 21px/1.1 var(--font-heading); text-align: center; }
 .cardTitle em { font-weight: 400; }
 .wishCard > svg { color: var(--rust); }
-.handwritten { position: absolute; bottom: 8px; left: 0; width: 100%; text-align: center; font: italic 14px/1.4 var(--font-heading); color: #846b41; }
-.exchangeDetails { border: 1px solid #dce2d5; border-left: 3px solid var(--gold); border-radius: 8px; background: #edf1e7; padding: 18px; display: flex; flex-wrap: wrap; gap: 15px 22px; font-size: 12px; color: #54634f; }
+.handwritten { position: absolute; bottom: 8px; left: 0; width: 100%; text-align: center; font: italic 14px/1.4 var(--font-heading); color: #6d5733; }
+.exchangeDetails { border: 1px solid #dce2d5; border-radius: 8px; background: #edf1e7; padding: 18px; display: flex; flex-wrap: wrap; gap: 15px 22px; font-size: 13px; color: #54634f; }
 .exchangeDetails > span { display: flex; align-items: center; gap: 8px; }
 .exchangeDetails svg { color: var(--green); }
 .exchangeLabel { color: var(--green); font-weight: 650; width: 100%; }
-.exchangeEnding { display: none !important; font: italic 14px var(--font-heading); }
-.howItWorks { background: var(--green); border: 1px solid #193e30; border-radius: 12px; padding: 25px 22px; display: flex; gap: 16px; align-items: flex-start; margin-bottom: 32px; position: relative; color: #fff8e8; }
+.exchangeEnding { display: none; font: italic 14px var(--font-heading); }
+.howItWorks { background: var(--green); border: 1px solid #193e30; border-radius: 12px; padding: 25px 22px; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; margin-bottom: 32px; position: relative; color: #fff8e8; }
 .howIcon { color: #e5c485; margin-top: 1px; }
-.howItWorks .eyebrow { font-size: 9px; margin-bottom: 8px; color: #e5c485; }
-.howItWorks h2 { font-size: 25px; letter-spacing: -.6px; }
-.howItWorks p:not(.eyebrow) { font-size: 13px; line-height: 1.8; color: #e1e8dc; margin-top: 10px; max-width: 610px; }
-.howStar { display: none; font-size: 57px; color: #e5c485; margin-left: auto; }
+.howItWorks h2 { font-size: 25px; letter-spacing: -.6px; text-wrap: balance; }
+.howItWorks p:not(.howLink) { font-size: 13px; line-height: 1.8; color: #e1e8dc; margin-top: 10px; max-width: 610px; }
+.howStar { display: none; color: #e5c485; margin-left: auto; }
+.howLink { padding-top: 16px; margin-top: 16px; border-top: 1px solid #376350; display: flex; align-items: flex-start; gap: 9px; font-size: 13px; line-height: 1.7; color: #e1e8dc; }
+.howLink svg { color: #e5c485; margin-top: 3px; flex-shrink: 0; }
 @media(min-width: 720px) {
   .hero { grid-template-columns: 1.1fr .9fr; align-items: center; padding-block: 48px 46px; gap: 15px; }
   .hero h1 { font-size: clamp(44px, 5.3vw, 62px); }
   .illustration { margin-top: 0; }
   .wishCard { right: 0; width: 112px; top: 25%; }
   .cardTitle { font-size: 23px; }
-  .heroNote { font-size: 11px; }
+  .cardEyebrow { font-size: 10px; }
+  .heroNote { font-size: 12px; }
   .exchangeDetails { align-items: center; padding: 21px 24px; gap: 25px; font-size: 12px; }
   .exchangeLabel { width: auto; padding-right: 25px; border-right: 1px solid #cbd5c4; }
-  .howItWorks { padding: 32px; align-items: center; margin-bottom: 44px; gap: 25px; }
+  .howItWorks { padding: 32px; flex-direction: row; align-items: center; margin-bottom: 44px; gap: 25px; }
   .howItWorks h2 { font-size: 29px; }
   .howStar { display: block; }
 }
-@media(min-width: 1000px) { .exchangeEnding { display: flex !important; margin-left: auto; } }
+@media(min-width: 1000px) { .exchangeEnding { display: flex; margin-left: auto; } }

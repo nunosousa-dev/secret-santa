@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { FamilyDirectory } from "@/components/family-directory";
 import { Icon } from "@/components/icon";
 import { ChristmasTree } from "@/components/christmas-tree";
@@ -26,8 +27,8 @@ export default function Home() {
     <main id="content" className="container">
       <section className={styles.hero} aria-labelledby="welcome-title">
         <div className={styles.heroCopy}>
-          <p className={`eyebrow ${styles.seasonBadge}`}><Icon name="star" size={13} />{family.name.toLocaleUpperCase("pt-PT")} · {family.year}</p>
           <h1 id="welcome-title">Pequenos desejos,<br />grandes <em>sorrisos.</em></h1>
+          <p className={styles.seasonBadge}><Icon name="star" size={13} />{family.name} · {family.year}</p>
           <p className={styles.welcome}>{family.welcome}</p>
           <a className="button" href="#family">Descobrir os desejos <Icon name="arrow" size={18} /></a>
           <p className={styles.heroNote}><Icon name="heart" size={14} /> Escolhidos com carinho. Oferecidos em segredo.</p>
@@ -40,11 +41,11 @@ export default function Home() {
         {family.budget && <span><Icon name="coin" size={17} />Até {formatBudget(family.budget)} por presente</span>}
         <span className={styles.exchangeEnding}>O carinho não tem preço.</span>
       </div>}
-      <FamilyDirectory members={members} />
+      <Suspense fallback={null}><FamilyDirectory members={members} /></Suspense>
       <section className={styles.howItWorks} aria-labelledby="how-title">
         <div className={styles.howIcon}><Icon name="gift" size={29} /></div>
-        <div><p className="eyebrow">A TRADIÇÃO CONTINUA</p><h2 id="how-title">O sorteio é à moda antiga.</h2><p>Baralhamos os cartões, tiramos um nome e guardamos o segredo. Aqui, partilhamos as pistas para encontrar o presente certo.</p></div>
-        <span className={styles.howStar} aria-hidden="true">✳</span>
+        <div><h2 id="how-title">O sorteio é à moda antiga.</h2><p>Baralhamos os cartões, tiramos um nome e guardamos o segredo. Aqui, partilhamos as pistas para encontrar o presente certo.</p><p className={styles.howLink}><Icon name="heart" size={14} /> És da família? Abre a ligação privada que recebeste do organizador para editar os teus desejos. Perdeste-a? Pede uma nova ao organizador.</p></div>
+        <Icon name="sparkles" size={48} className={styles.howStar} />
       </section>
     </main>
   );

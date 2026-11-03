@@ -3,7 +3,7 @@ import { HOST, ORIGIN, PORT } from './scripts/visual-public-state';
 
 /**
  * Mobile-first visual-acceptance harness for public screens.
- * Captures full-page screenshots at 320 / 390 / 430 CSS-px widths
+ * Captures full-page screenshots at 320 / 390 / 430 / 1280 CSS-px widths
  * against a dedicated standalone server instance backed by a throwaway
  * SQLite database created fresh under the OS temp dir by
  * scripts/visual-public-stack.ts, so this pass is reproducible in any
@@ -43,6 +43,7 @@ export default defineConfig({
     { name: 'width-320', use: { viewport: { width: 320, height: 568 } } },
     { name: 'width-390', use: { viewport: { width: 390, height: 844 } } },
     { name: 'width-430', use: { viewport: { width: 430, height: 932 } } },
+    { name: 'width-1280', use: { viewport: { width: 1280, height: 900 } } },
   ],
   webServer: {
     command: 'tsx scripts/visual-public-stack.ts',

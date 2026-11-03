@@ -1,10 +1,10 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { STATE_FILE, type VisualPublicState } from '../scripts/visual-public-state';
 
 /**
  * Visual acceptance for PUBLIC screens only (no auth flows).
- * Runs at three mobile widths (320 / 390 / 430) defined in
+ * Runs at three mobile widths (320 / 390 / 430) and desktop (1280) defined in
  * playwright.config.ts projects. Every shot is full-page at DPR 2.
  *
  * Screenshot names carry the width, e.g. home-320.png.
@@ -30,8 +30,68 @@ const SCREENS: Array<{ name: string; path: string | (() => string); expectStatus
   { name: 'not-found-route', path: '/nao-existe-xyz', expectStatus: 404 },
 ];
 
-const WIDTHS = [320, 390, 430] as const;
+const WIDTHS = [320, 390, 430, 1280] as const;
 const failures: string[] = [];
+
+test.describe('family directory interactions', () => {
+  test('finds a member regardless of accents or surrounding whitespace', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('searchbox', { name: 'Procurar por nome ou interesse' }).fill('  Ines  ');
+    const directory = page.getByRole('region', { name: 'A nossa família' });
+    await expect(directory.getByRole('heading', { name: 'Inês', exact: true })).toBeVisible();
+    await expect(directory.getByRole('listitem')).toHaveCount(1);
+    await expect(directory.getByRole('status')).toHaveText('1 perfil encontrado');
+    await page.screenshot({ path: `__screenshots__/home-search-${page.viewportSize()?.width}.png`, fullPage: true });
+  });
+
+  test('reports results even when a search matches the whole family', async ({ page }) => {
+    await page.goto('/');
+    const search = page.getByRole('searchbox', { name: 'Procurar por nome ou interesse' });
+    const directory = page.getByRole('region', { name: 'A nossa família' });
+    await search.fill('a');
+    await expect(directory.getByRole('listitem')).toHaveCount(7);
+    await expect(directory.getByRole('status')).toHaveText('7 perfis encontrados');
+    await expect(directory.getByRole('status')).toBeVisible();
+    await search.fill('   ');
+    await expect(directory.getByRole('listitem')).toHaveCount(7);
+    await expect(directory.getByRole('status')).toBeEmpty();
+  });
+
+  test('recovers from an empty search and keeps the search ready for typing', async ({ page }) => {
+    await page.goto('/');
+    const search = page.getByRole('searchbox', { name: 'Procurar por nome ou interesse' });
+    const directory = page.getByRole('region', { name: 'A nossa família' });
+    await search.fill('no-such-relative');
+    await expect(directory.getByRole('heading', { name: 'Não encontrámos ninguém.' })).toBeVisible();
+    await expect(directory.getByRole('status')).toHaveText('0 perfis encontrados');
+    await page.screenshot({ path: `__screenshots__/home-search-empty-${page.viewportSize()?.width}.png`, fullPage: true });
+    await directory.getByRole('button', { name: 'Ver toda a família' }).click();
+    await expect(search).toHaveValue('');
+    await expect(search).toBeFocused();
+    await expect(directory.getByRole('listitem')).toHaveCount(7);
+    await search.fill('Cafe');
+    await expect(directory.getByRole('heading', { name: 'Miguel', exact: true })).toBeVisible();
+    await directory.getByRole('button', { name: 'Limpar pesquisa' }).click();
+    await expect(search).toBeFocused();
+    await expect(directory.getByRole('listitem')).toHaveCount(7);
+    await search.fill('Ines');
+    await search.press('Escape');
+    await expect(search).toHaveValue('');
+    await expect(search).toBeFocused();
+    await expect(directory.getByRole('listitem')).toHaveCount(7);
+  });
+
+  test('returns from a profile to the family heading', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    const directory = page.getByRole('region', { name: 'A nossa família' });
+    await directory.getByRole('link').filter({ has: page.getByRole('heading', { name: 'Inês', exact: true }) }).click();
+    await expect(page).toHaveURL(/\/p\/m-003$/);
+    await page.getByRole('link', { name: 'Voltar à família', exact: true }).click();
+    await expect(page).toHaveURL(/\/#family$/);
+    await expect(page.getByRole('heading', { name: 'A nossa família' })).toBeInViewport({ ratio: 1 });
+  });
+});
 
 test.describe('visual acceptance — public screens', () => {
   for (const screen of SCREENS) {
