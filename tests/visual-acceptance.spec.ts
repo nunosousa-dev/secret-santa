@@ -34,6 +34,16 @@ const WIDTHS = [320, 390, 430, 1280] as const;
 const failures: string[] = [];
 
 test.describe('family directory interactions', () => {
+  test('keeps the exchange closing note exclusive to wide layouts', async ({ page }) => {
+    await page.goto('/');
+    const note = page.getByText('O carinho não tem preço.', { exact: true });
+    if ((page.viewportSize()?.width ?? 0) >= 1000) {
+      await expect(note).toBeVisible();
+    } else {
+      await expect(note).toBeHidden();
+    }
+  });
+
   test('finds a member regardless of accents or surrounding whitespace', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('searchbox', { name: 'Procurar por nome ou interesse' }).fill('  Ines  ');

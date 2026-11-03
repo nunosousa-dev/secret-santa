@@ -19,7 +19,7 @@
 .exchangeDetails > span { display: flex; align-items: center; gap: 8px; }
 .exchangeDetails svg { color: var(--green); }
 .exchangeLabel { color: var(--green); font-weight: 650; width: 100%; }
-.exchangeEnding { display: none; font: italic 14px var(--font-heading); }
+.exchangeDetails > .exchangeEnding { display: none; font: italic 14px var(--font-heading); }
 .howItWorks { background: var(--green); border: 1px solid #193e30; border-radius: 12px; padding: 25px 22px; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; margin-bottom: 32px; position: relative; color: #fff8e8; }
 .howIcon { color: #e5c485; margin-top: 1px; }
 .howItWorks h2 { font-size: 25px; letter-spacing: -.6px; text-wrap: balance; }
@@ -41,4 +41,4 @@
   .howItWorks h2 { font-size: 29px; }
   .howStar { display: block; }
 }
-@media(min-width: 1000px) { .exchangeEnding { display: flex; margin-left: auto; } }
+@media(min-width: 1000px) { .exchangeDetails > .exchangeEnding { display: flex; margin-left: auto; } }

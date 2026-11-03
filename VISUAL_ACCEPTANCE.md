@@ -30,7 +30,9 @@ unknown route), and one Portuguese-URL rewrite sanity check (`/editar/<id>`).
 Directory interaction tests cover accent-insensitive searches with surrounding
 whitespace, result feedback when every profile matches, whitespace-only queries,
 empty-result recovery, focus after clearing, Escape-to-clear, and returning from a
-profile to the family heading. These run at all four public viewport widths.
+profile to the family heading. The exchange strip's closing note is also checked
+to remain hidden on mobile and visible on wide layouts. These run at all four
+public viewport widths.
 
 ## Authenticated screens — `tests/visual-acceptance-admin.spec.ts`
 
