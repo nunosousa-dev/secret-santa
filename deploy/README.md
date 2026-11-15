@@ -1,22 +1,27 @@
 # Homelab deployment
 
-These files match the infrastructure inspected in the sibling `homelab` repository. The deployment is prepared in [homelab PR #10](https://github.com/nunosousa-dev/homelab/pull/10) for review and has not been applied to the cluster.
+These files match the infrastructure in the sibling `homelab` repository, where the chart lives at `kubernetes/apps/secret-santa/`. It was first deployed local-only through [homelab PR #10](https://github.com/nunosousa-dev/homelab/pull/10).
 
-## Local-first testing
+## Hostnames
 
-The Application initially loads `values.yaml` followed by `values-local.yaml`. The override uses `https://amigo-secreto.local.nunosousa.dev` and Gateway listener `websecure`, which serves the existing local wildcard certificate. The Deployment derives `APP_URL` from this hostname, so login, mutations, private editing links and printed QR codes work on the local origin.
+One application and one database serve two hostnames at the same time:
 
-Resolve this hostname to the Traefik Gateway's LAN address using your existing local DNS or a temporary hosts entry on each test device. Use HTTPS. Phones must be on the home network or VPN. This stage needs neither a Cloudflare tunnel change nor a public DNS record.
+| Hostname | Who | Path | Organiser area |
+| --- | --- | --- | --- |
+| `https://amigo-secreto.nunosousa.dev` (`publicHostname`) | Family, anywhere | Cloudflare → tunnel → Traefik listener `web` | `/admin` and `/api/admin` redirect (302) to the local hostname |
+| `https://amigo-secreto.local.nunosousa.dev` (`hostname`) | LAN/VPN | Local DNS → Traefik listener `websecure`, local wildcard certificate | Available |
 
-Preflight on 14 October 2026 confirmed that this hostname already resolves to the Gateway at `10.0.0.30`, and certificate `all-local-nunosousa-dev` is ready. No additional DNS record is needed on the existing local resolver.
+The public hostname is the canonical `APP_URL`: private editing links and printed QR codes always use it, including when the organiser generates them from the local hostname. The Deployment adds the local hostname to `ADDITIONAL_ORIGINS`, so forms on both hostnames can save. Sessions are per hostname: signing in on one does not sign in on the other.
 
-There is one application and one database. The local and public values select the active origin; this does not enable concurrent editing through both hostnames. Local QR cards are for testing. Print the family cards only after switching to the final public origin.
+Local DNS already resolves `*.local.nunosousa.dev` to the Gateway at `10.0.0.30`, and certificate `all-local-nunosousa-dev` covers it. Set `publicHostname: ""` for a local-only deployment; `APP_URL` then falls back to the local hostname and no public route is rendered.
+
+Once family cards are printed, keep `publicHostname` unchanged: the QR codes encode it.
 
 ## Prepared configuration
 
 - Talos/Proxmox `amd64` nodes labelled `homelab/node-type: vm`.
 - Argo CD with local charts at `kubernetes/apps/<app>` and Applications at `kubernetes/apps/<app>.yaml`.
-- Traefik Gateway `homelab`, namespace `traefik`, listener `web`.
+- Traefik Gateway `homelab`, namespace `traefik`: listener `websecure` for the local hostname, `web` for the public one.
 - Public HTTPS terminates at Cloudflare; the tunnel forwards HTTP to `http://traefik.traefik.svc.cluster.local:80`.
 - SQLite and avatar BLOBs live on an RWO `truenas-iscsi-retain` PVC, with one replica and Recreate rollouts.
 - Optional backups use an RWX `truenas-nfs-retain` PVC. The active database stays on iSCSI.
@@ -24,7 +29,7 @@ There is one application and one database. The local and public values select th
 
 Developer-facing resources use `secret-santa`: chart, release, Application, namespace and admin Secret names. These manifests have not been deployed, so no existing cluster resources need renaming.
 
-The **proposed** hostname remains `amigo-secreto.nunosousa.dev`, matching the Portuguese product brand. Confirm it before creating DNS/tunnel entries or printing cards. The existing `websecure` certificate covers the local domain; the prepared public route uses `web`, following other public homelab services.
+HTTPRoutes spell out every field the Gateway API CRD defaults (`matches`, ref `group`/`kind`, backend `weight`); otherwise Argo CD reports them as permanently out of sync.
 
 ## Build and verify
 
@@ -48,7 +53,7 @@ With Helm installed, validate both configurations:
 ```sh
 helm lint deploy/helm/secret-santa --strict --set image.tag=test
 helm lint deploy/helm/secret-santa --strict --set image.tag=test --set backup.enabled=true
-helm lint deploy/helm/secret-santa --strict -f deploy/helm/secret-santa/values-local.yaml --set image.tag=test --set backup.enabled=true
+helm lint deploy/helm/secret-santa --strict --set image.tag=test --set publicHostname=
 helm template secret-santa deploy/helm/secret-santa --namespace secret-santa --set image.tag=test --set backup.enabled=true
 ```
 
@@ -86,14 +91,13 @@ Confirm the command succeeded and the file contains a `SealedSecret` with `encry
 
 Prepare a reviewable change in the homelab:
 
-1. Copy `deploy/helm/secret-santa/` to `kubernetes/apps/secret-santa/`.
-2. Set the published image/tag and confirm the hostname in `values.yaml`.
-3. Copy the validated SealedSecret to `kubernetes/apps/secret-santa/templates/admin-sealedsecret.yaml`.
-4. Copy `deploy/argocd/application.yaml` to `kubernetes/apps/secret-santa.yaml`, following the existing Application discovery mechanism.
-5. Keep `values-local.yaml` in the Application's `helm.valueFiles` for the first deployment and configure local DNS as described above.
-6. Review rendered manifests, then publish/sync through the normal GitOps workflow. The existing bootstrap ApplicationSet does not discover this user Application: register `kubernetes/apps/secret-santa.yaml` explicitly after merging.
+1. Copy `deploy/helm/secret-santa/` to `kubernetes/apps/secret-santa/`, keeping the homelab's `README.md` and `templates/admin-sealedsecret.yaml`.
+2. Set the published image tag in `values.yaml` (the homelab copy also enables backups).
+3. Copy `deploy/argocd/application.yaml` to `kubernetes/apps/secret-santa.yaml`.
+4. Keep the `amigo-secreto.nunosousa.dev` entry in `kubernetes/bootstrap/cloudflared/templates/config.yaml`, above the final `http_status:404` catch-all, with service `http://traefik.traefik.svc.cluster.local:80`.
+5. Review rendered manifests, then merge to `main`. The bootstrap ApplicationSet does not discover this user Application: re-apply `kubernetes/apps/secret-santa.yaml` with `kubectl` whenever it changes, and restart cloudflared after its configuration changes.
 
-After the local pilot, prepare public promotion: remove `values-local.yaml` from the Application's `helm.valueFiles`, add the public hostname to cloudflared with service `http://traefik.traefik.svc.cluster.local:80`, arrange a tunnel restart when its config changes, and create the proxied DNS record for the existing tunnel. The same release, Secret and PVCs are retained. Restart the app with the public `APP_URL`, issue fresh links using the public hostname and verify external HTTPS before printing final cards.
+The homelab chart README lists the exact activation commands and checks.
 
 The Application uses automated synchronisation. Publishing these files to the branch watched by Argo CD can start deployment. PVCs have Helm retention and `Prune=false` to prevent automatic deletion.
 
@@ -119,4 +123,4 @@ Create and verify a backup before upgrading. Review migrations and update the im
 
 After the first deployment, verify HTTPS over a mobile network, login/editing, avatar upload, persistence after pod replacement and backup/recovery on real storage. Recovery has already been checked with Docker volumes; cluster CSI/NFS acceptance remains pending.
 
-Create real profiles in `/admin`, clear the demonstration flag in family settings and share private editing links manually. Print a sample from `/admin/cards`, fold it twice and scan it on a phone before printing the final cards. The container never seeds fictional data automatically.
+Create real profiles in `/admin` on the local hostname, clear the demonstration flag in family settings and share private editing links manually. Print a sample from `/admin/cards`, fold it twice and scan it on a phone before printing the final cards. The container never seeds fictional data automatically.

@@ -4,6 +4,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { openStore } from "../src/lib/db/store";
+import { allowedOrigins } from "../src/lib/origins";
 import { hashPassword, hashToken, randomToken, verifyPassword } from "../src/lib/security";
 import { preferencesSchema } from "../src/lib/validation";
 
@@ -97,4 +98,11 @@ test("A fresh family is empty and does not inherit fictional exchange settings",
     assert.equal(store.getFamily().budget, undefined);
     assert.equal(store.getFamily().exchangeDate, undefined);
   } finally { store.close(); }
+});
+
+test("The canonical origin comes first and additional hostnames are accepted for mutations", () => {
+  assert.deepEqual(allowedOrigins({}), ["http://localhost:3000"]);
+  assert.deepEqual(allowedOrigins({ APP_URL: "https://amigo-secreto.nunosousa.dev/", ADDITIONAL_ORIGINS: " https://amigo-secreto.local.nunosousa.dev , ,https://amigo-secreto.nunosousa.dev" }), ["https://amigo-secreto.nunosousa.dev", "https://amigo-secreto.local.nunosousa.dev"]);
+  assert.throws(() => allowedOrigins({ APP_URL: "https://family.example", ADDITIONAL_ORIGINS: "ftp://family.example" }), /ADDITIONAL_ORIGINS/);
+  assert.throws(() => allowedOrigins({ APP_URL: "https://user:secret@family.example" }), /APP_URL/);
 });

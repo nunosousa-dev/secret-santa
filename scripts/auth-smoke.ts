@@ -21,12 +21,14 @@ assert.ok(address && typeof address !== "string");
 const port = address.port;
 await new Promise<void>(resolve => probe.close(() => resolve()));
 const origin = `http://127.0.0.1:${port}`;
+// A second hostname serving the same app, e.g. the local-network name next to the public one.
+const additionalOrigin = "https://local.family.example";
 const password = randomToken();
 let child: ChildProcess | undefined;
 let exit: Promise<void> | undefined;
 
 async function start(encoded: string) {
-  child = spawn(process.execPath, ["scripts/start.mjs"], { env: { ...process.env, PORT: String(port), HOSTNAME: "127.0.0.1", APP_URL: origin, DATABASE_PATH: database, ADMIN_PASSWORD_HASH: encoded, NODE_ENV: "production" }, stdio: "ignore" });
+  child = spawn(process.execPath, ["scripts/start.mjs"], { env: { ...process.env, PORT: String(port), HOSTNAME: "127.0.0.1", APP_URL: origin, ADDITIONAL_ORIGINS: additionalOrigin, DATABASE_PATH: database, ADMIN_PASSWORD_HASH: encoded, NODE_ENV: "production" }, stdio: "ignore" });
   exit = new Promise(resolve => child!.once("exit", () => resolve()));
   for (let attempt = 0; attempt < 100; attempt++) {
     if (child.exitCode !== null) throw new Error("Test server stopped before becoming ready.");
@@ -80,6 +82,7 @@ try {
   assert.equal((await request("/api/admin/login", { password }, "", "POST", "https://wrong.example")).status, 403);
   assert.equal((await request("/api/admin/login", { password }, "", "POST", null)).status, 403);
   assert.equal((await request("/api/admin/login", { password: "wrong" })).status, 401);
+  assert.equal((await request("/api/admin/login", { password: "wrong" }, "", "POST", additionalOrigin)).status, 401, "Configured additional origins must pass the origin check");
   const adminCookie = cookie(await request("/api/admin/login", { password }));
   const originalCards = await printedUrls(adminCookie);
   assert.equal(originalCards.urls.length, 6);

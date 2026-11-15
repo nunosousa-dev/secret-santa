@@ -1,6 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { getStore } from "./db";
+import { allowedOrigins } from "./origins";
 import { validPasswordHash } from "./security";
 
 export const ADMIN_COOKIE = "as_admin";
@@ -12,9 +13,11 @@ export function adminPasswordHash(): string {
 }
 
 export function appOrigin(): string {
-  const url = new URL(process.env.APP_URL || "http://localhost:3000");
-  if (!["http:", "https:"].includes(url.protocol) || url.username || url.password) throw new Error("APP_URL must be an HTTP(S) origin");
-  return url.origin;
+  return allowedOrigins(process.env)[0];
+}
+
+export function acceptedOrigins(): string[] {
+  return allowedOrigins(process.env);
 }
 
 export async function adminSession() {

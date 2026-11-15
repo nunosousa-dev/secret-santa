@@ -1,5 +1,5 @@
 import "server-only";
-import { appOrigin } from "./auth";
+import { acceptedOrigins } from "./auth";
 
 export class HttpError extends Error {
   constructor(public status: number, message: string) { super(message); }
@@ -8,7 +8,7 @@ export class HttpError extends Error {
 export const json = (data: unknown, status = 200) => Response.json(data, { status, headers: { "Cache-Control": "no-store" } });
 
 export function assertSameOrigin(request: Request, contentTypes = ["application/json"]) {
-  if (request.headers.get("origin") !== appOrigin()) throw new HttpError(403, "Pedido não autorizado.");
+  if (!acceptedOrigins().includes(request.headers.get("origin") ?? "")) throw new HttpError(403, "Pedido não autorizado.");
   if (!contentTypes.includes(request.headers.get("content-type")?.split(";")[0].trim().toLowerCase() ?? "")) throw new HttpError(415, "Formato de pedido inválido.");
 }
 

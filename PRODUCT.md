@@ -37,7 +37,7 @@ A personal, family-run profile book tied to a real physical ritual (folded A4 ca
 - Server-side origin/permission checks on every mutation; rate-limited organiser login; stale-form conflict handling; `noindex` on the site.
 - Compatibility rewrites keep previously shared `/editar/<id>`, `/avatares/<id>`, `/admin/cartoes` URLs and stable public profile IDs/QR codes valid.
 - Language conventions (AGENTS.md): code, routes, docs, diagnostics in English; family-facing UI, a11y text, validation, print instructions and fictional profile content in European Portuguese.
-- Open decision: live public deployment pending; final `APP_URL` set before printing cards.
+- Deployment: public at `https://amigo-secreto.nunosousa.dev` (canonical `APP_URL`, used by editing links and printed QR codes) and on the home network at `https://amigo-secreto.local.nunosousa.dev`; `/admin` is reachable only through the local hostname.
 
 ## Brand Commitments
 
