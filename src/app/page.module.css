@@ -42,3 +42,39 @@
   .howStar { display: block; }
 }
 @media(min-width: 1000px) { .exchangeDetails > .exchangeEnding { display: flex; margin-left: auto; } }
+.heroCopy > * { animation: rise .7s cubic-bezier(.2, .7, .3, 1) both; }
+.heroCopy > :nth-child(2) { animation-delay: .1s; }
+.heroCopy > :nth-child(3) { animation-delay: .2s; }
+.heroCopy > :nth-child(4) { animation-delay: .3s; }
+.heroCopy > :nth-child(5) { animation-delay: .4s; }
+.heroCopy :global(.button) svg { animation: nudge 2.4s 1.4s ease-in-out infinite; }
+.heroNote svg { animation: heartbeat 2.8s 1.2s ease-in-out infinite; }
+.illustration { animation: fadeIn 1s .2s ease-out both; }
+.wishCard { transform-origin: 50% 0; animation: sway 6s ease-in-out infinite alternate; }
+.exchangeLabel svg, .howStar { animation: twinkle 3.2s ease-in-out infinite; }
+.howStar { animation-duration: 4.5s; }
+.howIcon svg { transform-origin: 50% 85%; animation: giftHop 6s 1s ease-in-out infinite; }
+@keyframes nudge {
+  0%, 60%, 100% { transform: translateX(0); }
+  70% { transform: translateX(4px); }
+  80% { transform: translateX(0); }
+  90% { transform: translateX(2px); }
+}
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+@keyframes fadeIn { from { opacity: 0; } }
+@keyframes sway { from { transform: rotate(9deg); } to { transform: rotate(5deg); } }
+@keyframes twinkle {
+  0%, 100% { transform: scale(1) rotate(0); opacity: 1; }
+  50% { transform: scale(.82) rotate(12deg); opacity: .7; }
+}
+@keyframes heartbeat {
+  0%, 60%, 100% { transform: scale(1); }
+  10%, 30% { transform: scale(1.2); }
+  20% { transform: scale(1.05); }
+}
+@keyframes giftHop {
+  0%, 80%, 100% { transform: translateY(0) rotate(0); }
+  85% { transform: translateY(-4px) rotate(-8deg); }
+  90% { transform: translateY(0) rotate(0); }
+  95% { transform: translateY(-2px) rotate(6deg); }
+}

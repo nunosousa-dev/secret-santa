@@ -1,0 +1,61 @@
+.tree * { transform-box: fill-box; transform-origin: center; }
+.halo { animation: haloTurn 120s linear infinite; }
+.sparkle { animation: sparkle 3.6s ease-in-out infinite; }
+.sparkle:nth-of-type(2) { animation-delay: -1.1s; animation-duration: 4.2s; }
+.sparkle:nth-of-type(3) { animation-delay: -2.3s; }
+.sparkle:nth-of-type(4) { animation-delay: -.6s; animation-duration: 4.8s; }
+.glint { animation: glint 2.8s ease-in-out infinite; }
+.glint:nth-of-type(2) { animation-delay: -1.4s; }
+.glint:nth-of-type(3) { animation-delay: -.7s; animation-duration: 3.4s; }
+.topper { animation: topperPulse 4s ease-in-out infinite; }
+.topperHalo { opacity: 0; animation: topperGlow 4s ease-in-out infinite; }
+.garland { stroke-dasharray: 1; stroke-dashoffset: 0; animation: garlandDraw 2.4s .3s ease-out both; }
+.light, .lightHalo { animation: lightTwinkle 2.4s ease-in-out infinite; }
+.lightHalo { opacity: 0; animation-name: haloTwinkle; }
+:is(.light, .lightHalo):nth-of-type(2) { animation-delay: -.8s; animation-duration: 3s; }
+:is(.light, .lightHalo):nth-of-type(3) { animation-delay: -1.7s; }
+:is(.light, .lightHalo):nth-of-type(4) { animation-delay: -.4s; animation-duration: 2.8s; }
+:is(.light, .lightHalo):nth-of-type(5) { animation-delay: -2.1s; animation-duration: 3.3s; }
+.shine { animation: shine 5s ease-in-out infinite; }
+.shine:nth-of-type(2) { animation-delay: -1.25s; }
+.shine:nth-of-type(3) { animation-delay: -2.5s; }
+.shine:nth-of-type(4) { animation-delay: -3.75s; }
+.gift { transform-origin: 50% 100%; animation: giftHop 7s ease-in-out infinite; }
+.giftLate { animation-delay: 3.5s; }
+@keyframes haloTurn { to { transform: rotate(360deg); } }
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: scale(1) rotate(0); }
+  50% { opacity: .25; transform: scale(.55) rotate(45deg); }
+}
+@keyframes glint {
+  0%, 100% { opacity: .3; transform: scale(.7); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+@keyframes topperPulse {
+  0%, 100% { transform: scale(1) rotate(0); }
+  50% { transform: scale(1.08) rotate(-4deg); }
+}
+@keyframes topperGlow {
+  0%, 100% { opacity: 0; transform: scale(.6); }
+  50% { opacity: 1; transform: scale(1); }
+}
+@keyframes garlandDraw { from { stroke-dashoffset: 1; } }
+@keyframes lightTwinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .45; }
+}
+@keyframes haloTwinkle {
+  0%, 100% { opacity: .9; transform: scale(1); }
+  50% { opacity: 0; transform: scale(.5); }
+}
+@keyframes shine {
+  0%, 70%, 100% { opacity: .9; }
+  80% { opacity: .2; }
+}
+@keyframes giftHop {
+  0%, 84%, 100% { transform: translateY(0) rotate(0); }
+  87% { transform: translateY(-5px) rotate(-2deg); }
+  90% { transform: translateY(0) rotate(0); }
+  93% { transform: translateY(-3px) rotate(2deg); }
+  96% { transform: translateY(0) rotate(0); }
+}

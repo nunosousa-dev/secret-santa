@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SiteHeader, SiteFooter, SampleNotice } from "@/components/site-header";
+import { TouchFeedback } from "@/components/touch-feedback";
 import { getStore } from "@/lib/db";
 import "./globals.css";
 
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         {family.demo && <SampleNotice />}
         <SiteFooter />
+        <TouchFeedback />
       </body>
     </html>
   );
