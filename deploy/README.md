@@ -61,9 +61,11 @@ helm template secret-santa deploy/helm/secret-santa --namespace secret-santa --s
 
 ## Publish the image
 
-Source lives in [nunosousa-dev/secret-santa](https://github.com/nunosousa-dev/secret-santa), with SSH origin `git@github.com:nunosousa-dev/secret-santa.git`. `.github/workflows/image.yaml` verifies the code and publishes `ghcr.io/nunosousa-dev/secret-santa:sha-<full-commit-sha>` on pushes to `main` and manual runs. Pull requests build without publishing. Check the workflow result before configuring the homelab tag.
+Source lives in [nunosousa-dev/secret-santa](https://github.com/nunosousa-dev/secret-santa), with SSH origin `git@github.com:nunosousa-dev/secret-santa.git`. `.github/workflows/image.yaml` verifies the code and publishes `ghcr.io/nunosousa-dev/secret-santa:sha-<full-commit-sha>` on pushes to `main` and manual runs, for testing. Pull requests build without publishing.
 
-Set the verified commit tag in `image.tag`. The image must be public, or the namespace must contain a GHCR registry Secret referenced by `imagePullSecrets`.
+Production images come from GitHub Releases: `.github/workflows/release.yaml` publishes `ghcr.io/nunosousa-dev/secret-santa:<X.Y.Z>` when release `vX.Y.Z` is published. See [RELEASING.md](../RELEASING.md).
+
+Set the released version (for example `1.0.0`) in `image.tag`. The image must be public, or the namespace must contain a GHCR registry Secret referenced by `imagePullSecrets`.
 
 ## Prepare the admin Secret
 

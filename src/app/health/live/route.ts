@@ -1,3 +1,5 @@
+import { version } from "../../../../package.json";
+
 export function GET() {
-  return Response.json({ status: "ok" }, { headers: { "Cache-Control": "no-store" } });
+  return Response.json({ status: "ok", version }, { headers: { "Cache-Control": "no-store" } });
 }

@@ -12,7 +12,7 @@ The application includes a public family directory with name/interest search, in
 
 Protected administration at `/admin` supports member creation, renaming, archiving/restoration, avatar uploads, preferences, family settings and issuing/replacing/revoking private editing links. Administration stays locked until a password is configured. Printable avatar/name/QR cards are available at `/admin/cards`; the draw remains physical.
 
-The homelab chart serves the app publicly at `https://amigo-secreto.nunosousa.dev` and on the home network at `https://amigo-secreto.local.nunosousa.dev`; the public address goes live once its tunnel entry and DNS record are in place. Links and QR codes use the public address; administration is reachable only through the local address. The GitHub image workflow publishes each `main` commit; check its result before selecting a deployment tag. See [deployment instructions](deploy/README.md).
+The homelab chart serves the app publicly at `https://amigo-secreto.nunosousa.dev` and on the home network at `https://amigo-secreto.local.nunosousa.dev`; the public address goes live once its tunnel entry and DNS record are in place. Links and QR codes use the public address; administration is reachable only through the local address. Deployments use versioned images published from GitHub Releases; see [release process](RELEASING.md) and [deployment instructions](deploy/README.md).
 
 ## Run locally
 
