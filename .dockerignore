@@ -11,4 +11,3 @@ playwright-report
 *.tsbuildinfo
 .DS_Store
 README.md
-IMPLEMENTATION_PLAN.md

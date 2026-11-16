@@ -111,7 +111,6 @@ The container test creates isolated volumes and credentials and removes them aft
 - `scripts/`: credential setup, migrations, backups and HTTP/container checks.
 - `tests/`: access, administration, image, QR and persistence checks.
 - `.github/workflows/image.yaml`: verification and commit-tagged GHCR publishing.
-- `IMPLEMENTATION_PLAN.md`: requirements, milestones and remaining decisions.
 
 ## Acceptance walkthrough
 
