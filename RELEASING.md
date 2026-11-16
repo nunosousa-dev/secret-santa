@@ -14,14 +14,16 @@ The release workflow fails if they differ.
 ## Checklist
 
 1. Start from an up-to-date `main` with a green `Verify and publish container` run.
-2. Bump the version:
+2. Bump the version in a pull request (`main` accepts changes only through squash-merged PRs with a passing `verify` check):
    ```sh
+   git switch -c release/vX.Y.Z
    npm version X.Y.Z --no-git-tag-version
    # edit version and appVersion in deploy/helm/secret-santa/Chart.yaml
    git commit -am "Release vX.Y.Z"
-   git push
+   git push -u origin release/vX.Y.Z
+   gh pr create --fill && gh pr merge --squash --auto
    ```
-3. Publish the release:
+3. Once merged, publish the release (`v*` tags cannot be moved or deleted afterwards):
    ```sh
    gh release create vX.Y.Z --target main --generate-notes
    ```
