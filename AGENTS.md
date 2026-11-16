@@ -13,3 +13,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Write documentation, identifiers, comments, command-line output and developer diagnostics in English.
 - Keep family-facing UI, accessibility text, metadata, validation messages and fictional profile content in European Portuguese (`pt-PT`).
 - Use English names for new routes and deployment resources. Preserve compatibility with previously shared URLs and permanent public profile IDs.
+
+## Commit conventions
+
+- Use [Conventional Commits](https://www.conventionalcommits.org/) for commit messages and pull request titles: `type(scope)!: subject`, with types `feat`, `fix`, `perf`, `refactor`, `docs`, `style`, `test`, `build`, `ci`, `chore` or `revert`.
+- Write the subject in the imperative, starting lowercase, without a trailing period. Mark breaking changes with `!` and a `BREAKING CHANGE:` footer.
+- `main` accepts only squash-merged pull requests, so the PR title becomes the commit on `main`; the `conventional-title` check enforces it.
+- Map types to SemVer when releasing: `feat` → minor, `fix`/`perf` → patch, breaking change → major.

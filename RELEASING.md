@@ -19,7 +19,7 @@ The release workflow fails if they differ.
    git switch -c release/vX.Y.Z
    npm version X.Y.Z --no-git-tag-version
    # edit version and appVersion in deploy/helm/secret-santa/Chart.yaml
-   git commit -am "Release vX.Y.Z"
+   git commit -am "chore(release): vX.Y.Z"
    git push -u origin release/vX.Y.Z
    gh pr create --fill && gh pr merge --squash --auto
    ```
