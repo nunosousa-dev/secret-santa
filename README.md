@@ -12,7 +12,7 @@ The application includes a public family directory with name/interest search, in
 
 Protected administration at `/admin` supports member creation, renaming, archiving/restoration, avatar uploads, preferences, family settings and issuing/replacing/revoking private editing links. Administration stays locked until a password is configured. Printable avatar/name/QR cards are available at `/admin/cards`; the draw remains physical.
 
-The homelab chart serves the app publicly at `https://amigo-secreto.nunosousa.dev` and on the home network at `https://amigo-secreto.local.nunosousa.dev`; the public address goes live once its tunnel entry and DNS record are in place. Links and QR codes use the public address; administration is reachable only through the local address. Deployments use versioned images published from GitHub Releases; see [release process](RELEASING.md) and [deployment instructions](deploy/README.md).
+Versioned container images are published from GitHub Releases; see the [release process](RELEASING.md).
 
 ## Run locally
 
@@ -64,7 +64,7 @@ Migrations run automatically when the database opens; the command also allows ru
 
 Snapshots include preferences, avatar BLOBs, settings and access records. To restore, stop the server, preserve the previous state and copy the snapshot to a writable directory. Set `DATABASE_PATH` to that copy before restarting. Keep old `-wal`/`-shm` files separate from the restored snapshot. The application needs a writable working copy rather than a read-only backup mount.
 
-The homelab configuration uses one replica, Recreate rollouts and an RWO `truenas-iscsi-retain` volume for SQLite. `truenas-nfs-retain` holds backup snapshots only. Optional daily backups are disabled by default and do not delete old snapshots. Tests verify profile/avatar recovery into a writable copy and a fresh Docker volume. `data/` and `uploads/` are Git-ignored.
+SQLite needs a single replica on a writable volume; never run two app instances against the same database file. Tests verify profile/avatar recovery into a writable copy and a fresh Docker volume. `data/` and `uploads/` are Git-ignored.
 
 ## Avatars, members and printable cards
 
@@ -110,7 +110,6 @@ The container test creates isolated volumes and credentials and removes them aft
 - `src/lib/sample-data.ts`: Portuguese fictional content and date/currency formatting.
 - `scripts/`: credential setup, migrations, backups and HTTP/container checks.
 - `tests/`: access, administration, image, QR and persistence checks.
-- `deploy/`: Helm chart, Argo CD Application and homelab instructions.
 - `.github/workflows/image.yaml`: verification and commit-tagged GHCR publishing.
 
 ## Acceptance walkthrough

@@ -102,7 +102,7 @@ test("A fresh family is empty and does not inherit fictional exchange settings",
 
 test("The canonical origin comes first and additional hostnames are accepted for mutations", () => {
   assert.deepEqual(allowedOrigins({}), ["http://localhost:3000"]);
-  assert.deepEqual(allowedOrigins({ APP_URL: "https://amigo-secreto.nunosousa.dev/", ADDITIONAL_ORIGINS: " https://amigo-secreto.local.nunosousa.dev , ,https://amigo-secreto.nunosousa.dev" }), ["https://amigo-secreto.nunosousa.dev", "https://amigo-secreto.local.nunosousa.dev"]);
+  assert.deepEqual(allowedOrigins({ APP_URL: "https://family.example/", ADDITIONAL_ORIGINS: " https://local.family.example , ,https://family.example" }), ["https://family.example", "https://local.family.example"]);
   assert.throws(() => allowedOrigins({ APP_URL: "https://family.example", ADDITIONAL_ORIGINS: "ftp://family.example" }), /ADDITIONAL_ORIGINS/);
   assert.throws(() => allowedOrigins({ APP_URL: "https://user:secret@family.example" }), /APP_URL/);
 });
