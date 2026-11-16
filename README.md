@@ -112,7 +112,6 @@ The container test creates isolated volumes and credentials and removes them aft
 - `tests/`: access, administration, image, QR and persistence checks.
 - `deploy/`: Helm chart, Argo CD Application and homelab instructions.
 - `.github/workflows/image.yaml`: verification and commit-tagged GHCR publishing.
-- `IMPLEMENTATION_PLAN.md`: requirements, milestones and remaining decisions.
 
 ## Acceptance walkthrough
 
