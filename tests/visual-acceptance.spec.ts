@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { test, expect } from '@playwright/test';
+import { devices, test, expect } from '@playwright/test';
 import { STATE_FILE, type VisualPublicState } from '../scripts/visual-public-state';
 
 /**
@@ -32,6 +32,46 @@ const SCREENS: Array<{ name: string; path: string | (() => string); expectStatus
 
 const WIDTHS = [320, 390, 430, 1280] as const;
 const failures: string[] = [];
+
+test.describe('installation on an iPhone', () => {
+  test.use({ userAgent: devices['iPhone 13'].userAgent });
+
+  test('offers instructions on a direct profile visit and remembers dismissal', async ({ page }) => {
+    await page.goto('/p/m-001');
+    const banner = page.getByRole('complementary', { name: 'Instalar o Amigo Secreto' });
+    const instructions = banner.getByRole('button', { name: 'Como instalar' });
+    await expect(instructions).toHaveAttribute('aria-expanded', 'false');
+    await instructions.click();
+    await expect(banner.getByText('Adicionar ao ecrã principal', { exact: true })).toBeVisible();
+    await expect(instructions).toHaveAttribute('aria-expanded', 'true');
+    await banner.getByRole('button', { name: 'Fechar aviso de instalação' }).click();
+    await page.goto('/');
+    await expect(banner).toHaveCount(0);
+  });
+
+  test('hides the banner when launched from the home screen', async ({ page }) => {
+    await page.addInitScript(() => Object.defineProperty(navigator, 'standalone', { value: true }));
+    await page.goto('/');
+    await expect(page.getByRole('complementary', { name: 'Instalar o Amigo Secreto' })).toHaveCount(0);
+  });
+});
+
+test.describe('installation on Android', () => {
+  test.use({ userAgent: devices['Pixel 7'].userAgent });
+
+  test('uses the browser installation prompt when it becomes available', async ({ page }) => {
+    await page.goto('/');
+    const banner = page.getByRole('complementary', { name: 'Instalar o Amigo Secreto' });
+    await expect(banner.getByRole('button', { name: 'Como instalar' })).toBeVisible();
+    await page.evaluate(() => {
+      const event = new Event('beforeinstallprompt', { cancelable: true });
+      Object.assign(event, { prompt: async () => ({ outcome: 'accepted' }) });
+      window.dispatchEvent(event);
+    });
+    await banner.getByRole('button', { name: 'Instalar', exact: true }).click();
+    await expect(banner).toHaveCount(0);
+  });
+});
 
 test.describe('family directory interactions', () => {
   test('keeps the exchange closing note exclusive to wide layouts', async ({ page }) => {
