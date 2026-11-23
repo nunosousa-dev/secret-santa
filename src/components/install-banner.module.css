@@ -1,0 +1,101 @@
+.wrapper {
+  margin-block: 16px 0;
+}
+
+.banner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-areas: "icon copy action dismiss" "instructions instructions instructions instructions";
+  align-items: center;
+  column-gap: 12px;
+  padding: 10px 12px;
+  background: #edf2e7;
+  border: 1px solid #d5e2cf;
+  border-radius: 12px;
+  color: var(--ink);
+}
+
+.icon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  background: #dfeadc;
+  color: var(--green);
+  border-radius: 9px;
+}
+
+.copy {
+  grid-area: copy;
+  line-height: 1.4;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.description {
+  margin-top: 2px;
+  font-size: 13px;
+}
+
+.action {
+  grid-area: action;
+  min-height: 44px;
+  padding: 8px 13px;
+  white-space: nowrap;
+}
+
+.action:disabled {
+  cursor: wait;
+  opacity: .7;
+}
+
+.dismiss {
+  grid-area: dismiss;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--green);
+  cursor: pointer;
+}
+
+.dismiss:hover {
+  background: #dfeadc;
+}
+
+.instructions {
+  grid-area: instructions;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #d5e2cf;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 540px) {
+  .banner {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "icon copy dismiss" ". action ." "instructions instructions instructions";
+    align-items: start;
+    column-gap: 8px;
+  }
+
+  .action {
+    justify-self: start;
+    margin-top: 8px;
+  }
+}
+
+@media print {
+  .wrapper {
+    display: none;
+  }
+}
