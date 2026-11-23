@@ -30,8 +30,6 @@
 .empty > svg { margin: auto auto 14px; }
 .empty h3 { color: var(--green); margin-bottom: 8px; font: 400 25px/1.2 var(--font-heading); text-wrap: balance; }
 .empty p { margin-bottom: 20px; font-size: 14px; }
-@media(min-width: 360px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media(min-width: 360px) and (max-width: 719px) { .card h3 { font-size: 24px; } }
 @media(min-width: 720px) { .directory { padding-block: 48px 62px; } .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; } .heading { grid-template-columns: 1fr 270px; align-items: end; gap: 32px; margin-bottom: 32px; } .search { margin-bottom: 4px; } .search input { font-size: 13px; } .card { padding: 31px 25px 0; } .card h3 { font-size: 30px; } .introduction { font-size: 13px; } .cardLink { font-size: 13px; min-height: 54px; } }
 /* Phones have no hover, so the star pins sparkle on their own, one card after another. */
 .portraitStar { animation: pinSparkle 6s ease-in-out infinite; }
