@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "border-accent-on-rounded",
+        "value": "*",
+        "files": [
+          "src/components/family-directory.module.css"
+        ],
+        "createdAt": "2026-11-23T16:45:59.780Z",
+        "reason": "Agent: the alternating green and rust top borders were introduced as festive styling and curve cleanly into the card corners in the mobile and desktop renders."
+      }
+    ]
+  }
+}
